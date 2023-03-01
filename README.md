@@ -19,6 +19,7 @@ This project provides example integration with both [Google's Geocoding API](htt
 - Assign the right Salesforce Maps permission set(s) and/or permission set license to your user
 - Create an org-wide custom setting for "Google API Key" and enter your Google API Key 
 - Create an org-wide custom setting for "Geocoding Service" and provide the value "Google" or "Maps" depending on which geocoding service to use
+- Inactivate the Data Integration Rule "Geocodes for Service Appointment Address" 
 
 # Usage
 
@@ -32,7 +33,29 @@ This example comes with an Apex Trigger on the Service Appointment object which 
 | Geocoding Status              | Geocoding_Status__c              | Picklist  | "Success" or "Error"                                           |
 | Geocoding View in Google Maps | Geocoding_View_in_Google_Maps__c | Formula   | Hyperlink to open Google Maps using Latitude and Longitude     |
 
-If you want to implement this on another object, create these fields on that object, otherwise exceptions will be thrown due to missing fields.
+If you want to implement this on another object:
+- Create the custom fields on the object, otherwise exceptions will be thrown due to missing fields
+- Create an Apex Trigger for the object copying the code from the ServiceAppointmentGeocoding Trigger
+- Inactivate the Data Integration Rule for that object
+
+If the object has address fields which are named differently, like the Account Billing Address fields, pass a Map<String, String> with the field name mapping into the geocodingUtil.ProcessRecords method. The following example shows how to do this for the billing address on Account:
+
+    trigger AccountGeocodingTrigger on Account (after insert, after update){
+        Map<String, String> addressFields = new Map<String, String>{
+            'Street' => 'BillingStreet',
+            'PostalCode' => 'BillingPostalCode',
+            'City' => 'BillingCity',
+            'State' => 'BillingState',
+            'Country' => 'BillingCountry',
+            'Latitude' => 'BillingLatitude',
+            'Longitude' => 'BillingLongitude',
+            'GeocodeAccuracy' => 'BillingGeocodeAccuracy'
+        };
+
+        geocodingUtil.processRecords((Map<Id, SObject>) trigger.oldMap, (Map<Id, SObject>) trigger.newMap, addressFields, trigger.isInsert);
+    }
+
+This allows you to use geocoding for an object with customer address fields as well instead of using an address compound field.
 
 # Google API Showcase
 
