@@ -1,36 +1,51 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
-        <members>*</members>
+        <members>geocodingUtil</members>
+        <members>GoogleAPIController</members>
+        <members>googleGeocodingQueueable</members>
+        <members>googleGeocodingUtil</members>
+        <members>mapsGeocodingQueueable</members>
+        <members>mapsGeocodingUtil</members>
+        <members>RESTGoogleMapAPI</members>	
         <name>ApexClass</name>
     </types>
     <types>
-        <members>*</members>
-        <name>ApexComponent</name>
+        <members>googleAPIShowcase</members>
+		<name>LightningComponentBundle</name>
+    </types>	
+    <types>
+        <members>GoogleAPIKey__c</members>
+        <members>Geocoding_Service__c</members>
+        <name>CustomObject</name>
     </types>
     <types>
-        <members>*</members>
-        <name>ApexPage</name>
-    </types>
+        <members>ServiceAppointment.Geocode__c</members>
+        <members>ServiceAppointment.Geocoding_Last_Update__c</members>
+        <members>ServiceAppointment.Geocoding_Message__c</members>
+        <members>ServiceAppointment.Geocoding_Status__c</members>
+        <members>ServiceAppointment.Geocoding_View_in_Google_Maps__c</members>
+        <name>CustomField</name>
+    </types>    
     <types>
-        <members>*</members>
-        <name>ApexTestSuite</name>
-    </types>
+		<members>Google_API_Showcase</members>		
+        <name>CustomTab</name>
+    </types>	
     <types>
-        <members>*</members>
-        <name>ApexTrigger</name>
-    </types>
+		<members>Google_API_Showcase</members>		
+        <name>CustomApplication</name>
+    </types>	    
     <types>
-        <members>*</members>
-        <name>AuraDefinitionBundle</name>
-    </types>
+        <members>Google_API_Showcase</members>
+		<name>FlexiPage</name>
+    </types>	
     <types>
-        <members>*</members>
-        <name>LightningComponentBundle</name>
-    </types>
+        <members>Google_Maps_API</members>
+        <name>NamedCredential</name>
+    </types>	
     <types>
-        <members>*</members>
-        <name>StaticResource</name>
+        <members>Field_Service_Geocoding_Permissions</members>
+        <name>PermissionSet</name>
     </types>
     <version>56.0</version>
 </Package>
