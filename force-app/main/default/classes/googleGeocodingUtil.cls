@@ -29,6 +29,8 @@ public with sharing class googleGeocodingUtil {
             'PostalCode' => 'PostalCode',
             'State' => 'State',
             'Country' => 'Country',
+            'Latitude' => 'Latitude',
+            'Longitude' => 'Longitude',
             'GeocodeAccuracy' => 'GeocodeAccuracy'
         };
         processRecords(oldRecords, newRecords, addressFields, isInsert);
@@ -103,6 +105,8 @@ public with sharing class googleGeocodingUtil {
             'PostalCode' => 'PostalCode',
             'State' => 'State',
             'Country' => 'Country',
+            'Latitude' => 'Latitude',
+            'Longitude' => 'Longitude',
             'GeocodeAccuracy' => 'GeocodeAccuracy'
         };        
         updateLatLngForAddresses(sObjAPIName, recordIds, addressFields);
@@ -157,8 +161,8 @@ public with sharing class googleGeocodingUtil {
                     (String)sObj.get(addressFields.get('Country'))
                 );
                 if (result.status == 'OK'){
-                    sObj.put('Latitude', result.loc.Latitude);
-                    sObj.put('Longitude', result.loc.Longitude);
+                    sObj.put(addressFields.get('Latitude'), result.loc.Latitude);
+                    sObj.put(addressFields.get('Longitude'), result.loc.Longitude);
                     sObj.put('Geocoding_Last_Update__c', System.now());
                     if (geoAccuracies.contains(result.accuracy)){
                         sObj.put(addressFields.get('GeocodeAccuracy'), result.accuracy);

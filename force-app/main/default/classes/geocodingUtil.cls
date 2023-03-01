@@ -47,6 +47,8 @@ public with sharing class geocodingUtil {
             'PostalCode' => 'PostalCode',
             'State' => 'State',
             'Country' => 'Country',
+            'Latitude' => 'Latitude',
+            'Longitude' => 'Longitude',
             'GeocodeAccuracy' => 'GeocodeAccuracy'
         };
         processRecords(oldRecords, newRecords, addressFields, isInsert);

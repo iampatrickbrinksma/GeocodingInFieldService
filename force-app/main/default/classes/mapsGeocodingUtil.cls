@@ -32,6 +32,8 @@ public with sharing class mapsGeocodingUtil {
             'PostalCode' => 'PostalCode',
             'State' => 'State',
             'Country' => 'Country',
+            'Latitude' => 'Latitude',
+            'Longitude' => 'Longitude',
             'GeocodeAccuracy' => 'GeocodeAccuracy'
         };
         processRecords(oldRecords, newRecords, addressFields, isInsert);
@@ -181,8 +183,8 @@ public with sharing class mapsGeocodingUtil {
                             if (result.get('success') == true){
                                 Map<String, Object> data = (Map<String, Object>)result.get('data');
                                 Map<String, Object> position = (Map<String, Object>)data.get('position');
-                                record.put('Latitude', (Decimal)position.get('lat'));
-                                record.put('Longitude', (Decimal)position.get('lng'));
+                                record.put(addressFields.get('Latitude'), (Decimal)position.get('lat'));
+                                record.put(addressFields.get('Longitude'), (Decimal)position.get('lng'));
                                 // This could result in an exception if the 
                                 // Salesforce Maps matchLevel values do not match
                                 // the geoAccuracy restricted picklist values
