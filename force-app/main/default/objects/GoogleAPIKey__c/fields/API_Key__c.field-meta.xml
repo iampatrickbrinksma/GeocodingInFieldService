@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>API_Key__c</fullName>
+    <description>Google API Key, get yours at https://developers.google.com/maps/documentation/javascript/get-api-key</description>
+    <externalId>false</externalId>
+    <label>API Key</label>
+    <length>100</length>
+    <required>true</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>
