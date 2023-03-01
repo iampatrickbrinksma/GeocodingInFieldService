@@ -1,0 +1,188 @@
+<template>
+    <div class="slds-box slds-theme_default">
+        <lightning-tabset active-tab-value={activeTab}>
+            <lightning-tab id="apiKey" value="apiKey" label="Google API Key" onactive={handle_setActiveTab}>
+                <div class="slds-box slds-theme_default">
+                    <div class="slds-var-p-around_medium lgc-bg">
+                        <lightning-formatted-text 
+                            value="Enter a valid Google API Key which will be used for the API calls."
+                        ></lightning-formatted-text>
+                    </div>                    
+                    <div class="slds-var-p-around_medium lgc-bg">
+                        <lightning-input type="text" 
+                            label="Google API Key" 
+                            name="googleapikey"
+                            value={googleAPIKey} 
+                            onchange={handle_InputFieldChange}>
+                        </lightning-input>
+                        <lightning-input type="checkbox" 
+                            label="Remember API Key (cookie)" 
+                            name="rememberAPIKey"
+                            checked={rememberAPIKey} 
+                            onchange={handle_InputFieldChange}>
+                        </lightning-input>                       
+                    </div> 
+                    <div class="slds-var-p-around_medium lgc-bg">
+                        <lightning-formatted-url value="https://developers.google.com/maps/documentation/javascript/get-api-key" tooltip="Get your Google API Key" label="Get your Google API Key here." target="_blank" ></lightning-formatted-url>
+                    </div>
+                </div>
+            </lightning-tab>
+            <lightning-tab id="geoCoding" value="geoCoding" label="Google Geocoding API" onactive={handle_setActiveTab}>
+                <div class="slds-box slds-theme_default">
+                    <div class="slds-var-p-around_medium lgc-bg">
+                        <lightning-formatted-text 
+                            value="Enter address details and hit Submit to obtain latitude and longitude."
+                        ></lightning-formatted-text>
+                    </div>                
+                    <!--
+                    <div class="slds-var-p-around_medium lgc-bg">
+                        <lightning-input type="text" 
+                            label="Street" 
+                            name="street"
+                            value={address.street} 
+                            onchange={handle_InputFieldChange}>
+                        </lightning-input>
+                    </div>
+                    <div class="slds-var-p-around_medium lgc-bg">
+                        <lightning-input type="text" 
+                            label="Postal Code" 
+                            name="postalcode"
+                            value={address.postalcode} 
+                            onchange={handle_InputFieldChange}>
+                        </lightning-input>
+                    </div>
+                    <div class="slds-var-p-around_medium lgc-bg">
+                        <lightning-input type="text" 
+                            label="City" 
+                            name="city"
+                            value={address.city} 
+                            onchange={handle_InputFieldChange}>
+                        </lightning-input>
+                    </div> 
+                    <div class="slds-var-p-around_medium lgc-bg">
+                        <lightning-input type="text" 
+                            label="State" 
+                            name="state"
+                            value={address.state} 
+                            onchange={handle_InputFieldChange}>
+                        </lightning-input>
+                    </div>         
+                    <div class="slds-var-p-around_medium lgc-bg">
+                        <lightning-input type="text" 
+                            label="Country" 
+                            name="country"
+                            value={address.country} 
+                            onchange={handle_InputFieldChange}>
+                        </lightning-input>
+                    </div> 
+                    -->    
+                    <div class="slds-var-p-around_medium lgc-bg">
+                        <lightning-record-edit-form object-api-name="ServiceAppointment">
+                            <lightning-messages>
+                            </lightning-messages>
+                            <lightning-input-address
+                                address-label="Address"
+                                street-label="Street"
+                                city-label="City"
+                                country-label="Country"
+                                province-label="State/Province"
+                                postal-code-label="Zip/Postal Code"
+                                street={address.street}
+                                postal-code={address.postalcode}
+                                city={address.city}
+                                state={address.state}
+                                country={address.country}
+                                onchange={handle_addressInputChange}
+                                show-address-lookup>
+                            </lightning-input-address>
+                        </lightning-record-edit-form>     
+                    </div>                
+                    <div class="slds-var-p-around_medium lgc-bg">
+                        <lightning-button-group>
+                            <lightning-button label="Submit" 
+                                onclick={handle_GeoCodeSubmit}>
+                            </lightning-button>
+                            <lightning-button label="Clear" 
+                                onclick={handle_ClearGeoCodeForm}>
+                            </lightning-button>                            
+                        </lightning-button-group>
+                    </div>
+                    <div class="slds-var-p-around_medium lgc-bg">
+                        <lightning-textarea name="geoResults" readonly value={geoResults} label="Geocoding API RAW Response" ></lightning-textarea>
+                    </div>       
+                    <div class="slds-var-p-around_medium lgc-bg">
+                        <lightning-formatted-url value="https://developers.google.com/maps/documentation/geocoding/overview" tooltip="Google Geocoding API" label="Google Geocoding API documentation" target="_blank" ></lightning-formatted-url>
+                    </div>
+                </div>
+            </lightning-tab>
+            <lightning-tab id="travelTimes" value="travelTimes" label="Google Distance Matrix API" onactive={handle_setActiveTab}>
+                <div class="slds-box slds-theme_default">    
+                    <div class="slds-var-p-around_medium lgc-bg">
+                        <lightning-formatted-text 
+                            value="Add locations (lat/lng) manually or by geocoding addresses in the Google Geocoding API tab and hit Submit to calcute travel time and distance between all locations."
+                        ></lightning-formatted-text>
+                    </div>                      
+                    <div class="slds-box slds-theme_default">
+                        <template for:each={locations} for:item="loc">
+                            <div key={loc.id} class="slds-var-p-around_medium lgc-bg">
+                                <lightning-card>
+                                    <lightning-input-location 
+                                        data-index={loc.id}
+                                        latitude={loc.lat}
+                                        longitude={loc.lng}
+                                        onchange={handle_LocationInputChange}>
+                                    </lightning-input-location>
+                                    <lightning-button-icon 
+                                        data-index={loc.id}
+                                        icon-name="action:delete" 
+                                        alternative-text="Remove Location" 
+                                        title="Remove Location" 
+                                        onclick={handle_RemoveLocation}>    
+                                    </lightning-button-icon>   
+                                </lightning-card>                       
+                            </div>        
+                        </template>
+                        <div class="slds-var-p-around_medium lgc-bg">
+                            <lightning-button label="Add Location" 
+                                onclick={handle_AddLocation}>
+                            </lightning-button>
+                        </div> 
+                    </div>    
+                    <div class="slds-var-p-around_medium lgc-bg">
+                        <lightning-button-group>
+                            <lightning-button label="Submit" 
+                                onclick={handle_TravelTimesSubmit}>
+                            </lightning-button>
+                            <lightning-button label="Clear" 
+                                onclick={handle_ClearLocations}>
+                            </lightning-button>                            
+                        </lightning-button-group>                        
+                    </div>
+                    <div class="slds-var-p-around_medium lgc-bg">
+                        <lightning-card title="Distance Matrix Results">
+                            <template for:each={distanceMatrix} for:item="dis">
+                                <div key={dis.id} class="slds-var-p-around_medium lgc-bg">
+                                    <div class="slds-var-p-around_medium lgc-bg">
+                                        Status: {dis.status}<br/>
+                                        From: {dis.from}<br/>
+                                        From Address: {dis.fromAddress}<br/>
+                                        To: {dis.to}<br/>
+                                        To Address: {dis.toAddress}<br/>
+                                        Distance: {dis.distance}<br/>
+                                        Travel Time: {dis.duration}<br/>
+                                    </div>
+                                </div>
+                            </template>
+                        </lightning-card>
+                    </div> 
+                    <div class="slds-var-p-around_medium lgc-bg">
+                        <lightning-textarea name="geoResults" readonly value={dispatchMatrixResults} label="Distance Matrix API RAW Response" ></lightning-textarea>
+                    </div>  
+                    <div class="slds-var-p-around_medium lgc-bg">
+                        <lightning-formatted-url value="https://developers.google.com/maps/documentation/distance-matrix/overview" tooltip="Google Distance Matrix API" label="Google Distance Matrix API documentation" target="_blank" ></lightning-formatted-url>
+                    </div>
+                </div>
+            </lightning-tab>            
+        </lightning-tabset>
+    </div>
+</template>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
+    <brand>
+        <headerColor>#4285F4</headerColor>
+        <logo>googlelogo</logo>
+        <logoVersion>1</logoVersion>
+        <shouldOverrideOrgTheme>true</shouldOverrideOrgTheme>
+    </brand>
+    <description>Showcase of the Google Geocoding and Distance Matrix API</description>
+    <formFactors>Small</formFactors>
+    <formFactors>Large</formFactors>
+    <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
+    <isNavPersonalizationDisabled>true</isNavPersonalizationDisabled>
+    <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
+    <label>Google API Showcase</label>
+    <navType>Standard</navType>
+    <tabs>standard-home</tabs>
+    <tabs>Google_API_Showcase</tabs>
+    <uiType>Lightning</uiType>
+    <utilityBar>Google_API_Showcase_UtilityBar</utilityBar>
+</CustomApplication>
