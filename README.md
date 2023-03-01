@@ -73,6 +73,8 @@ This allows you to use geocoding for an object with customer address fields as w
 
 The Google Geocoding API allows you to request geocodes for a single address per API call. Salesforce allows 100 callouts per transaction. The Salesforce Maps bulk API allows up to 50 addresses per API call. To allow for larger chunk sizes the queueable classes that perform the geocoding logic will be chained once the chunk size is larger than the 100 or 50 records (addresses)
 
+> It is important to know that chaining queueables is limited to a depth of 5 in developer and demo orgs. Typically an Apex Trigger processed a maximum of 200 records per transaction so this should not cause a problem. However when data is being processed in bulk a larger batch size can be used which can lead to an exception being thrown...
+
 # Google API Showcase
 
 The Google API Showcase application can be used to test the Google Geocoding API to geocode an address. Additionally, the Google Distance Matrix API can be tested to calculate the distance and travel time between multiple addresses. Open the Google API Showcase application from the App Launcher and provide your Google API Key to test these APIs.
