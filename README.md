@@ -4,6 +4,10 @@ The Salesforce platform provide the ability to geocode addresses using the [Geoc
 
 This project provides example integration with both [Google's Geocoding API](https://developers.google.com/maps/documentation/geocoding/overview) and [Salesforce Maps Geocoding](https://developer.salesforce.com/docs/atlas.en-us.maps_developer_guide.meta/maps_developer_guide/maps_apex_batchgeocode.htm). Additionally, a Google API showcase application is included to test the Google Geocoding API and the [Google Distance Matrix API](https://developers.google.com/maps/documentation/distance-matrix/overview).
 
+# Disclaimer
+
+> IMPORTANT: This code is not intended to be deployed to a Salesforce production environment. It is intended as an example of how to utilise the Google Geocoding API, the Google Distance Matrix API and the Salesforce Maps API for Salesforce Field Service scenarios. 
+
 # Prerequisites
 
 - Salesforce Field Service licenses
