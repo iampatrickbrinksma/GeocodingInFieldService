@@ -23,9 +23,15 @@ This project provides example integration with both [Google's Geocoding API](htt
 - Assign the right Salesforce Maps permission set(s) and/or permission set license to your user
 - Create an org-wide custom setting for "Google API Key" and enter your Google API Key 
 - Create an org-wide custom setting for "Geocoding Service" and provide the value "Google" or "Maps" depending on which geocoding service to use
-- Inactivate the Data Integration Rule "Geocodes for Service Appointment Address" 
+- Inactivate the Data Integration Rule "Geocodes for Service Appointment Address" to prevent geocoding using this service
 
 # Usage
+
+## Asynchronous
+
+The geocoding of addresses is done asynchronously because a callout is required and Salesforce does not allow callouts to be made from an Apex Trigger. Queueable classes are used to perform the geocoding asynchronously. 
+
+## Apex Trigger
 
 This example comes with an Apex Trigger on the Service Appointment object which geocodes the address if any of the address fields have been changed. The following fields have been added to the Service Appointment object to capture geocoding specific information:
 
@@ -36,6 +42,8 @@ This example comes with an Apex Trigger on the Service Appointment object which 
 | Geocoding Message             | Geocoding_Message__c             | Text Area | Message describing the result of geocoding including any error |
 | Geocoding Status              | Geocoding_Status__c              | Picklist  | "Success" or "Error"                                           |
 | Geocoding View in Google Maps | Geocoding_View_in_Google_Maps__c | Formula   | Hyperlink to open Google Maps using Latitude and Longitude     |
+
+## Other Objects
 
 If you want to implement this on another object:
 - Create the custom fields on the object, otherwise exceptions will be thrown due to missing fields
@@ -60,6 +68,10 @@ If the object has address fields which are named differently, like the Account B
     }
 
 This allows you to use geocoding for an object with customer address fields as well instead of using an address compound field.
+
+## Bulk Operations
+
+The Google Geocoding API allows you to request geocodes for a single address per API call. Salesforce allows 100 callouts per transaction. The Salesforce Maps bulk API allows up to 50 addresses per API call. To allow for larger chunk sizes the queueable classes that perform the geocoding logic will be chained once the chunk size is larger than the 100 or 50 records (addresses)
 
 # Google API Showcase
 
