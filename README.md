@@ -78,3 +78,21 @@ The Google Geocoding API allows you to request geocodes for a single address per
 # Google API Showcase
 
 The Google API Showcase application can be used to test the Google Geocoding API to geocode an address. Additionally, the Google Distance Matrix API can be tested to calculate the distance and travel time between multiple addresses. Open the Google API Showcase application from the App Launcher and provide your Google API Key to test these APIs.
+
+The Google APIs accept a variety of parameters, which can be found in the documentation. In this example code the following parameters have been hardcoded:
+
+Google API Parameters
+
+The API parameters can be found in Google's documentation. For this example the following parameters are hardcoded in the request URL.
+
+* Geocoding API
+    * Format = json
+    * Language = en-US
+* Distance Matrix API
+    * Format = json
+    * Language = en-US
+    * Units = metric
+    * Mode = driving
+    * Avoid = tolls
+
+
