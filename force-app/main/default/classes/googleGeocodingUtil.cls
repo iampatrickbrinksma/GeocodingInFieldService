@@ -164,6 +164,7 @@ public with sharing class googleGeocodingUtil {
                     sObj.put(addressFields.get('Latitude'), result.loc.Latitude);
                     sObj.put(addressFields.get('Longitude'), result.loc.Longitude);
                     sObj.put('Geocoding_Last_Update__c', System.now());
+                    sObj.put('Geocoding_Status__c', 'Success');
                     if (geoAccuracies.contains(result.accuracy)){
                         sObj.put(addressFields.get('GeocodeAccuracy'), result.accuracy);
                         sObj.put('Geocoding_Message__c', 'Geocoded using Google Geocoding API');
