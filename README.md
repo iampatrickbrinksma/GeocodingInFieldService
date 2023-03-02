@@ -25,6 +25,10 @@ This project provides example integration with both [Google's Geocoding API](htt
 - Create an org-wide custom setting for "Geocoding Service" and provide the value "Google" or "Maps" depending on which geocoding service to use
 - Inactivate the Data Integration Rule "Geocodes for Service Appointment Address" to prevent geocoding using this service
 
+Optionally add the 5 new fields on to the Service Appointment Page Layout as shown here:
+
+![image](https://user-images.githubusercontent.com/78381570/222396173-117198d7-ac83-4242-88c2-2801027088ac.png)
+
 # Usage
 
 ## Asynchronous
