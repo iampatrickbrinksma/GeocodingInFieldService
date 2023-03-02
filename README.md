@@ -77,7 +77,33 @@ The Google Geocoding API allows you to request geocodes for a single address per
 
 # Google API Showcase
 
-The Google API Showcase application can be used to test the Google Geocoding API to geocode an address. Additionally, the Google Distance Matrix API can be tested to calculate the distance and travel time between multiple addresses. Open the Google API Showcase application from the App Launcher and provide your Google API Key to test these APIs.
+The Google API Showcase application can be used to test the Google Geocoding API to geocode an address. Additionally, the Google Distance Matrix API can be tested to calculate the distance and travel time between multiple addresses. Open the Google API Showcase application from the App Launcher and provide your Google API Key to test these APIs as shown here:
+
+![image](https://user-images.githubusercontent.com/78381570/222376942-5c9785b9-78a9-4dfa-9a42-1fd2794dab13.png)
+
+In the Google Geocoding API tab you can enter address details or search for an address.
+
+![image](https://user-images.githubusercontent.com/78381570/222377217-7a0f49ac-4599-43d9-acb1-4e1a820afffe.png)
+
+When you hit the Submit button, the address will be geocoded, and the result will be added as a new Location for the Distance Matrix API as shown here:
+
+![image](https://user-images.githubusercontent.com/78381570/222377423-3371c8d6-3412-4684-b341-034b26799e68.png)
+
+In the Google Geocoding API tab you van view the raw response from the API to validate the format as shown here:
+
+![image](https://user-images.githubusercontent.com/78381570/222377548-2b3099a3-5dfd-43fb-bd8a-a27168a13108.png)
+
+The Google Distance Matrix API tab allows you to calculate travel time between multiple locations. You can add locations using the Google Geocoding API tab as shown before, or you can add a new (or remove) location manually.
+
+![image](https://user-images.githubusercontent.com/78381570/222377980-689b261d-371e-4fc8-a469-92c418fe69e8.png)
+
+When you hit the Submit button the output will be shown in a formatted way.
+
+![image](https://user-images.githubusercontent.com/78381570/222378078-867e67b4-fb02-4850-ab57-9a6300aaebed.png)
+
+And the raw API Response can also be viewed.
+
+![image](https://user-images.githubusercontent.com/78381570/222378139-c9f315fd-8107-434a-a13f-d5c6465cb20b.png)
 
 The Google APIs accept a variety of parameters, which can be found in the documentation. In this example code the following parameters have been hardcoded:
 
