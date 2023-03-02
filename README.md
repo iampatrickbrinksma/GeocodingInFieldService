@@ -6,7 +6,7 @@ This project provides example integration with both [Google's Geocoding API](htt
 
 # Disclaimer
 
-> IMPORTANT: This code is not intended to be deployed to a Salesforce production environment. It is intended as an example of how to utilise the Google Geocoding API, the Google Distance Matrix API and the Salesforce Maps API for Salesforce Field Service scenarios. 
+> IMPORTANT: This code is not intended to be deployed to a Salesforce production environment. It is intended as an example of how to utilise the Google Geocoding API, the Google Distance Matrix API and the Salesforce Maps API for Salesforce Field Service scenarios. If you do decide to adopt this code into your project, please make it your own, make it production ready, write proper Apex Test classes and perform extensive testing. This is not a Salesforce product and is not supported by Salesforce.
 
 # Prerequisites
 
