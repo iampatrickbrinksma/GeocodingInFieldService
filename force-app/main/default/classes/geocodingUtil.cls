@@ -29,18 +29,18 @@ public with sharing class geocodingUtil {
             return geocodingServiceToUse;
         }
         private set;
-    }    
-
+    }      
     /**
     * ───────────────────────────────────────────────────────────────────────────────────────────────┐
     * Method to process changed records from an object that has standard address field names
     * ────────────────────────────────────────────────────────────────────────────────────────────────
     * @param    oldRecords      Trigger.old
     * @param    newRecords      Trigger.new
+    * @param    isBefore        Trigger.isBefore
     * @param    isInsert        Trigger.isInsert
     * ───────────────────────────────────────────────────────────────────────────────────────────────┘
     */
-    public static void processRecords(Map<Id, SObject> oldRecords, Map<Id, SObject> newRecords, Boolean isInsert){
+    public static void processRecords(Map<Id, SObject> oldRecords, Map<Id, SObject> newRecords, Boolean isBefore, Boolean isInsert){
         Map<String, String> addressFields = new Map<String, String>{
             'Street' => 'Street',
             'City' => 'City',
@@ -51,7 +51,7 @@ public with sharing class geocodingUtil {
             'Longitude' => 'Longitude',
             'GeocodeAccuracy' => 'GeocodeAccuracy'
         };
-        processRecords(oldRecords, newRecords, addressFields, isInsert);
+        processRecords(oldRecords, newRecords, addressFields, isBefore, isInsert);
     }
 
     /**
@@ -61,42 +61,43 @@ public with sharing class geocodingUtil {
     * @param    oldRecords      Trigger.old
     * @param    newRecords      Trigger.new
     * @param    addressFields   Map<String, String> - map of address field to API field name
+    * @param    isBefore        Trigger.isBefore
     * @param    isInsert        Trigger.isInsert
     * ───────────────────────────────────────────────────────────────────────────────────────────────┘
     */    
-    public static void processRecords(Map<Id, SObject> oldRecords, Map<Id, SObject> newRecords, Map<String, String> addressFields, Boolean isInsert){
+    public static void processRecords(Map<Id, SObject> oldRecords, Map<Id, SObject> newRecords, Map<String, String> addressFields, Boolean isBefore, Boolean isInsert){
         Set<Id> recordIdsToBeUpdated = new Set<Id>();
         string objApiName;
         for (SObject newRecord : newRecords.values()){
-            if (objApiName == null){
-                objApiName= String.valueOf(newRecord.getSObjectType());
-            }
-            if (isInsert==false){ //if not new insert (E.g. update/record already existed)
-                SObject oldRecord = oldRecords.get((Id)newRecord.get('Id'));
-                if ( 
-                    //if address fields weren't changed, skip this record (don't add to list of SAs to geocode)
-                    newRecord.get(addressFields.get('Street')) == oldRecord.get(addressFields.get('Street')) &&
-                    newRecord.get(addressFields.get('City')) == oldRecord.get(addressFields.get('City')) &&
-                    newRecord.get(addressFields.get('PostalCode')) == oldRecord.get(addressFields.get('PostalCode')) &&
-                    newRecord.get(addressFields.get('State')) == oldRecord.get(addressFields.get('State')) &&
-                    newRecord.get(addressFields.get('Country')) == oldRecord.get(addressFields.get('Country'))
-                  )
-                {
-                    continue; //skip this record and proceed to next record in the loop/trigger
+            if (isBefore) {
+                if (emptyAddressFields(newRecord, addressFields)) {
+                    clearGeocodingFields(newRecord, addressFields);
+                } 
+            } else {
+                // Get SObject API Name from the record
+                if (objApiName == null){
+                    objApiName = String.valueOf(newRecord.getSObjectType());
+                }       
+                if (isInsert){
+                    if (emptyAddressFields(newRecord, addressFields)) {
+                        continue;
+                    } else {
+                        recordIdsToBeUpdated.add((Id)newRecord.get('Id'));
+                    }
+                } else {
+                    SObject oldRecord = oldRecords.get((Id)newRecord.get('Id'));
+                    if ( 
+                        !emptyAddressFields(newRecord, addressFields) && (
+                        newRecord.get(addressFields.get('Street')) != oldRecord.get(addressFields.get('Street')) ||
+                        newRecord.get(addressFields.get('City')) != oldRecord.get(addressFields.get('City')) ||
+                        newRecord.get(addressFields.get('PostalCode')) != oldRecord.get(addressFields.get('PostalCode')) ||
+                        newRecord.get(addressFields.get('State')) != oldRecord.get(addressFields.get('State')) ||
+                        newRecord.get(addressFields.get('Country')) != oldRecord.get(addressFields.get('Country')))
+                    ) {
+                        recordIdsToBeUpdated.add((Id)newRecord.get('Id'));
+                    }
                 }
-            } else { //if this is a new insert, don't geocode if address is null - the user might be data loading/defining geolocation manually
-                if( //if some/all address fields aren't null, user meant to have this geocoded
-                    newRecord.get(addressFields.get('Street')) == null &&
-                    newRecord.get(addressFields.get('City')) == null &&
-                    newRecord.get(addressFields.get('PostalCode')) == null &&
-                    newRecord.get(addressFields.get('State')) == null &&
-                    newRecord.get(addressFields.get('Country')) == null
-                  )
-                {
-                    continue; //skip this record and proceed to next record in the loop/trigger
-                }
             }
-            recordIdsToBeUpdated.add((Id)newRecord.get('Id'));
         }
         
         if (!recordIdsToBeUpdated.isEmpty()){
@@ -115,4 +116,47 @@ public with sharing class geocodingUtil {
             }
         }
     }
+
+    /**
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┐
+    * Method to validate if all address fields are empty (except geocoding fields)
+    * ────────────────────────────────────────────────────────────────────────────────────────────────
+    * @param    newRecord       SObject
+    * @param    addressFields   Map<String, String> - map of address field to API field name
+    * @return   Boolean         True if all address fields are empty (except geocoding fields)
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┘
+    */        
+    private static Boolean emptyAddressFields(SObject newRecord, Map<String, String> addressFields){
+        if (
+            newRecord.get(addressFields.get('Street')) == null &&
+            newRecord.get(addressFields.get('City')) == null &&
+            newRecord.get(addressFields.get('PostalCode')) == null &&
+            newRecord.get(addressFields.get('State')) == null &&
+            newRecord.get(addressFields.get('Country')) == null
+        ) {
+            return true;
+        }
+        return false;
+
+    }
+
+    /**
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┐
+    * Method to emtpy custom geocoding fields
+    * ────────────────────────────────────────────────────────────────────────────────────────────────
+    * @param    newRecord       SObject
+    * @param    addressFields   Map<String, String> - map of address field to API field name
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┘
+    */            
+    private static void clearGeocodingFields(SObject newRecord, Map<String, String> addressFields){
+        newRecord.put('Geocoding_Last_Update__c', null);
+        newRecord.put('Geocoding_Status__c', null);
+        newRecord.put('Geocoding_Message__c', null);
+        newRecord.put(addressFields.get('Latitude'), null);
+        newRecord.put(addressFields.get('Longitude'), null);
+        newRecord.put(addressFields.get('GeocodeAccuracy'), null);
+        newRecord.put('FSL__InternalSLRGeolocation__Latitude__s', null);
+        newRecord.put('FSL__InternalSLRGeolocation__Longitude__s', null);
+    }
+
 }

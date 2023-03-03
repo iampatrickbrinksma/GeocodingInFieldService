@@ -11,6 +11,6 @@
 * 2023-02-01      Initial version
 * ─────────────────────────────────────────────────────────────────────────────────────────────────┘
 */
-trigger ServiceAppointmentGeocodingTrigger on ServiceAppointment (after insert, after update) {
-    geocodingUtil.processRecords((Map<Id, SObject>) trigger.oldMap, (Map<Id, SObject>) trigger.newMap, trigger.isInsert);
+trigger ServiceAppointmentGeocodingTrigger on ServiceAppointment (before insert, before update, after insert, after update) {
+    geocodingUtil.processRecords((Map<Id, SObject>) Trigger.oldMap, (Map<Id, SObject>) Trigger.newMap, Trigger.isBefore, Trigger.isInsert);
 }
