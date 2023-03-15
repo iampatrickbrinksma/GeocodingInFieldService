@@ -95,6 +95,10 @@ public with sharing class googleGeocodingUtil {
                         sObj.put(addressFields.get('GeocodeAccuracy'), 'Unknown');
                         sObj.put('Geocoding_Message__c', 'Geocoded using Google Geocoding API. Unknown Geocode Accuracy: ' + result.accuracy);
                     }
+                } else {
+                    sObj.put('Geocoding_Last_Update__c', System.now());
+                    sObj.put('Geocoding_Status__c', 'Error');
+                    sObj.put('Geocoding_Message__c', result.status + ' - ' + result.errorMessage);
                 }
                 recordIds.remove((Id)sObj.get('Id'));
             }
