@@ -15,6 +15,7 @@ This project provides example integration with both [Google's Geocoding API](htt
 - Salesforce Maps licenses
 - Salesforce Maps Managed Packaged installed
 - Google API Key
+    - You can [restrict access to your Google API Key](https://cloud.google.com/docs/authentication/api-keys?&_ga=2.32744121.-666786310.1677594976#http) by using the explicitly added HTTP Header 'referer' which contains the full My Domain url of your salesforce org
 
 # Setup
 
