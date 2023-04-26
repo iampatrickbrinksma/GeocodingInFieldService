@@ -78,8 +78,8 @@ public with sharing class googleGeocodingUtil {
                 GoogleAPIController.geoCodeResult result = GoogleAPIController.getLatLngForAddress(
                     GoogleAPIController.googleAPIKey,
                     (String)sObj.get(addressFields.get('Street')),
-                    (String)sObj.get(addressFields.get('City')),
                     (String)sObj.get(addressFields.get('PostalCode')),
+                    (String)sObj.get(addressFields.get('City')),
                     (String)sObj.get(addressFields.get('State')),
                     (String)sObj.get(addressFields.get('Country'))
                 );
