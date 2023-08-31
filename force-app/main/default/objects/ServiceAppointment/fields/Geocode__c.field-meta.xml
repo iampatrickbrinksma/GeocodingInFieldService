@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Geocode__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF(
+	TEXT(Latitude) != &quot;0&quot;, 
+	IF
+	(
+		Latitude &gt; 0 &amp;&amp; Latitude &lt; 1, 
+		&quot;0&quot; &amp; TEXT(Latitude), 
+		IF
+		(
+			Latitude &gt; -1 &amp;&amp; Latitude &lt; 0, 
+			&quot;-0&quot; &amp; MID(TEXT(Latitude), 2, LEN(TEXT(Latitude)) - 1),
+			TEXT(Latitude)
+		)
+	) 
+	&amp; &quot;, &quot; &amp; 
+	IF
+	(
+		Longitude &gt; 0 &amp;&amp; Longitude &lt; 1, 
+		&quot;0&quot; &amp; TEXT(Longitude), 
+		IF
+		(
+			Longitude &gt; -1 &amp;&amp; Longitude &lt; 0, 
+			&quot;-0&quot; &amp; MID(TEXT(Longitude), 2, LEN(TEXT(Longitude)) - 1),
+			TEXT(Longitude)
+		)
+	)
+	&amp; &quot; (&quot; &amp; TEXT(GeocodeAccuracy) &amp; &quot;)&quot;,
+	&quot;&quot;
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Geocode</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

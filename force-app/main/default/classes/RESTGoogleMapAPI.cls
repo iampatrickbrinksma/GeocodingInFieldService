@@ -71,7 +71,6 @@ public class RESTGoogleMapAPI {
         Http http = new Http();
         HttpResponse response = new HTTPResponse();
         HttpRequest request = new HttpRequest();    
-        request.setHeader('referer', Url.getOrgDomainUrl().toExternalForm());  
         // GET method
         request.setMethod('GET');
         request.setEndpoint(endPoint);

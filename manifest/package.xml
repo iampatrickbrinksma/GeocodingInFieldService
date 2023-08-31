@@ -34,9 +34,14 @@
     <types>
 		<members>Google_API_Showcase</members>		
         <name>CustomApplication</name>
-    </types>	    
+    </types>
+    <types>
+		<members>googlelogo</members>		
+        <name>ContentAsset</name>
+    </types>    
     <types>
         <members>Google_API_Showcase</members>
+        <members>Google_API_Showcase_UtilityBar</members>
 		<name>FlexiPage</name>
     </types>	
     <types>
