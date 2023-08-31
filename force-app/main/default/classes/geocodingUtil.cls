@@ -30,6 +30,7 @@ public with sharing class geocodingUtil {
         }
         private set;
     }      
+
     /**
     * ───────────────────────────────────────────────────────────────────────────────────────────────┐
     * Method to process changed records from an object that has standard address field names
@@ -115,6 +116,36 @@ public with sharing class geocodingUtil {
                 System.enqueueJob(q);                
             }
         }
+    }
+
+    /**
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┐
+    * Method to geocode a single address
+    * ────────────────────────────────────────────────────────────────────────────────────────────────
+    * @param    street          Street of the address
+    * @param    postalcode      Postal code / Zip code of the address
+    * @param    city            City of the address
+    * @param    state           State of the address
+    * @param    country         Country of the address
+    * @return   geoCodeResult   Result of the geocoding, like latitude and longitude
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┘
+    */    
+    public static geoCodeResult geoCodeAddress(String street, String postalcode, String city, String state, String country){
+        geoCodeResult result = new geoCodeResult();
+
+        return result;
+    } 
+
+    /**
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┐
+    * Inner class to wrap the geocoding results in to return to the caller for a single address
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┘
+    */      
+    public class geoCodeResult{
+        public String status;
+        public String errorMessage;
+        public System.Location loc;
+        public String accuracy;
     }
 
     /**
