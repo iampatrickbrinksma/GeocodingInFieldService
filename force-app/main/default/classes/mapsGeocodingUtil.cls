@@ -13,8 +13,51 @@
 */
 public with sharing class mapsGeocodingUtil {
 
+    private static Set<String> geoAccuracies = new Set<String>{
+        'Address',
+        'NearAddress',
+        'Block',
+        'Street',
+        'ExtendedZip',
+        'Zip',
+        'Neighborhood',
+        'City',
+        'County',
+        'State',
+        'Unknown'
+    };
+
     // Custom exception for throwing a Salesforce Maps related exception
     public class MapsGeocodingException extends Exception {} 
+
+    public static geocodingUtil.geoCodeResult geoCodeAddress(String street, String postalcode, String city, String state, String country){
+        // Return object
+        geocodingUtil.geoCodeResult geoCodeResult = new geocodingUtil.geoCodeResult();
+        // Concatenate address
+        String address = street + ' ' + city + ' ' + state + ' ' + postalcode + ' ' + country;
+
+        Map<string,object> options = new Map<String,Object> {
+                    'version' => '1', // Required. Version of the API endpoint. Must be '1'.
+                    'address' => address
+                };
+
+        // Call the Geocode() method with the address.
+        Map<String, Object> result = maps.API.Geocode(options);
+        System.debug(result);
+        geoCodeResult.status = (Boolean)result.get('success') == true ? 'OK' : 'NOK';
+        geoCodeResult.errorMessage = (String)result.get('message');
+        if (geoCodeResult.status == 'OK'){
+            Map<String, Object> data = (Map<String, Object>)result.get('data');
+            geoCodeResult.accuracy = (String)data.get('matchLevel');
+            Map<String, Object> position = (Map<String, Object>)data.get('position');
+            geoCodeResult.loc = System.Location.newInstance(
+                (Decimal)position.get('lat'),
+                (Decimal)position.get('lng')
+            );
+        }
+        // Return the results
+        return geoCodeResult;
+    }
 
     /**
     * ───────────────────────────────────────────────────────────────────────────────────────────────┐
@@ -26,20 +69,6 @@ public with sharing class mapsGeocodingUtil {
     * ───────────────────────────────────────────────────────────────────────────────────────────────┘
     */ 
     public static void updateLatLngForAddresses(Set<Id> recordIds, String objApiName, Map<String, String> addressFields){
-
-        Set<String> geoAccuracies = new Set<String>{
-            'Address',
-            'NearAddress',
-            'Block',
-            'Street',
-            'ExtendedZip',
-            'Zip',
-            'Neighborhood',
-            'City',
-            'County',
-            'State',
-            'Unknown'
-        };
 
         String query = 'select Id';
         for (String fieldName : addressFields.values()){

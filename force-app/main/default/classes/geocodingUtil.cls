@@ -131,10 +131,38 @@ public with sharing class geocodingUtil {
     * ───────────────────────────────────────────────────────────────────────────────────────────────┘
     */    
     public static geoCodeResult geoCodeAddress(String street, String postalcode, String city, String state, String country){
-        geoCodeResult result = new geoCodeResult();
+        return geoCodeAddress(geocodingServiceToUse, street, postalcode, city, state, country);
+    } 
+
+    /**
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┐
+    * Method to geocode a single address
+    * ────────────────────────────────────────────────────────────────────────────────────────────────
+    * @param    serviceToUse    Which service to use for Geocoding, Google or Maps
+    * @param    street          Street of the address
+    * @param    postalcode      Postal code / Zip code of the address
+    * @param    city            City of the address
+    * @param    state           State of the address
+    * @param    country         Country of the address
+    * @return   geoCodeResult   Result of the geocoding, like latitude and longitude
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┘
+    */    
+    public static geoCodeResult geoCodeAddress(String serviceToUse, String street, String postalcode, String city, String state, String country){
+        Long start = System.now().getTime();
+        geoCodeResult result;
+
+        if (serviceToUse == 'Maps') {
+            result = mapsGeocodingUtil.geoCodeAddress(street, postalcode, city, state, country);
+            result.serviceUsed = 'Salesforce Maps';
+        } else {
+            result = googleGeocodingUtil.geoCodeAddress(street, postalcode, city, state, country);
+            result.serviceUsed = 'Google';
+        }
+        result.durationInMs = System.now().getTime() - start;
 
         return result;
-    } 
+    }
+
 
     /**
     * ───────────────────────────────────────────────────────────────────────────────────────────────┐
@@ -146,6 +174,8 @@ public with sharing class geocodingUtil {
         public String errorMessage;
         public System.Location loc;
         public String accuracy;
+        public String serviceUsed;
+        public Long durationInMs;
     }
 
     /**
