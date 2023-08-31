@@ -42,3 +42,4 @@ $RECYCLE.BIN/
 # additional folders
 .husky
 .vscode
+config/user/.sfdx-hardis.pbrinksma.yml
