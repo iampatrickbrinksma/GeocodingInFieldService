@@ -15,6 +15,69 @@ public with sharing class googleGeocodingUtil {
 
     /**
     * ───────────────────────────────────────────────────────────────────────────────────────────────┐
+    * Retrieves the Google API Key from Custom Settings
+    * Please consider the security implications of providing the API Key via a Custom Setting, see:
+    * https://help.salesforce.com/articleView?id=sf.cs_schema_settings.htm&type=5
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┘
+    */        
+    private static String googleAPIKey {
+        get {
+            if (googleAPIKey == null){
+                GoogleAPIKey__c gAPIKey = GoogleAPIKey__c.getInstance();
+                if (gAPIKey != null && gAPIKey.API_Key__c != null){
+                    googleAPIKey = gAPIKey.API_Key__c;
+                }
+            }
+            return googleAPIKey;
+        }
+        set;
+    }    
+
+    /**
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┐
+    * Method to geocode a single address
+    * ────────────────────────────────────────────────────────────────────────────────────────────────
+    * @param    street          Street of the address
+    * @param    postalcode      Postal code / Zip code of the address
+    * @param    city            City of the address
+    * @param    state           State of the address
+    * @param    country         Country of the address
+    * @return   geoCodeResult   Result of the geocoding, like latitude and longitude
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┘
+    */     
+    public static geocodingUtil.geoCodeResult geoCodeAddress(String street, String postalcode, String city, String state, String country){
+        // Return object
+        geocodingUtil.geoCodeResult geoCodeResult = new geocodingUtil.geoCodeResult();
+        // Create address request object
+        RESTGoogleMapAPI.GoogleAddress address = new RESTGoogleMapAPI.GoogleAddress(
+            street,
+            postalcode,
+            city,
+            state,
+            country
+        );
+        // Instantiate with API Key
+        RESTGoogleMapAPI gMap = new RESTGoogleMapAPI(googleAPIKey);
+        // Geocode the address
+        RESTGoogleMapAPI.GoogleGeoCodeResult result = gMap.geoCodeAddress(address);    
+        geoCodeResult.status = result.status;
+        geoCodeResult.errorMessage = gMap.validateResultStatusCode(result.status);        
+        // Process results
+        if (result.status == 'OK'){
+            if (result.status == 'OK'){
+                geoCodeResult.loc = System.Location.newInstance(
+                    result.results[0].geometry.location.lat, 
+                    result.results[0].geometry.location.lng
+                );
+                geoCodeResult.accuracy = result.results[0].geometry.location_type;
+            }            
+        }
+        // Return the results
+        return geoCodeResult;
+    }    
+
+    /**
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┐
     * Method to geocode addresses for a set of records of an object with standard address field names
     * ────────────────────────────────────────────────────────────────────────────────────────────────
     * @param    sObjApiName     API Name of the SObject
@@ -75,8 +138,7 @@ public with sharing class googleGeocodingUtil {
         // Loop through the records and Geocode the address
         if (!listOfObj.isEmpty()){
             for (SObject sObj : listOfObj){
-                GoogleAPIController.geoCodeResult result = GoogleAPIController.getLatLngForAddress(
-                    GoogleAPIController.googleAPIKey,
+                geocodingUtil.geoCodeResult result = geoCodeAddress(
                     (String)sObj.get(addressFields.get('Street')),
                     (String)sObj.get(addressFields.get('PostalCode')),
                     (String)sObj.get(addressFields.get('City')),
