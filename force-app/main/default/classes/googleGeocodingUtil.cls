@@ -13,6 +13,14 @@
 */
 public with sharing class googleGeocodingUtil {
 
+    // Mapping of Google GeocodeAccuracy to the Salesforce values
+    private static Map<String, String> mapGeoAccuracies = new Map<String, String>{
+        'ROOFTOP' => 'Address',
+        'RANGE_INTERPOLATED' => 'Street',
+        'GEOMETRIC_CENTER' => 'Street',
+        'APPROXIMATE' => 'Zip'
+    };    
+
     /**
     * ───────────────────────────────────────────────────────────────────────────────────────────────┐
     * Retrieves the Google API Key from Custom Settings
@@ -69,7 +77,9 @@ public with sharing class googleGeocodingUtil {
                     result.results[0].geometry.location.lat, 
                     result.results[0].geometry.location.lng
                 );
-                geoCodeResult.accuracy = result.results[0].geometry.location_type;
+                String geoAccuracy = mapGeoAccuracies.get(result.results[0].geometry.location_type);
+                if (geoAccuracy == null) geoAccuracy = 'Unknown';
+                geoCodeResult.accuracy = geoAccuracy;
             }            
         }
         // Return the results
@@ -108,21 +118,6 @@ public with sharing class googleGeocodingUtil {
     * ───────────────────────────────────────────────────────────────────────────────────────────────┘
     */ 
     public static void updateLatLngForAddresses(String sObjAPIName, Set<Id> recordIds, Map<String, String> addressFields){
-        // Existing GeocodeAccuracy values in Salesforce
-        Set<String> geoAccuracies = new Set<String>{
-            'Address',
-            'NearAddress',
-            'Block',
-            'Street',
-            'ExtendedZip',
-            'Zip',
-            'Neighborhood',
-            'City',
-            'County',
-            'State',
-            'Unknown'
-        };
-
         // Query for the records including the address fields, Location fields to update 
         // and limit by 100 records, as one API call will be done per record which 
         // is a restriction of the Google Geocoding API. Salesforce allows a maximum of 100 callouts per transaction
@@ -150,7 +145,7 @@ public with sharing class googleGeocodingUtil {
                     sObj.put(addressFields.get('Longitude'), result.loc.Longitude);
                     sObj.put('Geocoding_Last_Update__c', System.now());
                     sObj.put('Geocoding_Status__c', 'Success');
-                    if (geoAccuracies.contains(result.accuracy)){
+                    if (result.accuracy != 'Unknown'){
                         sObj.put(addressFields.get('GeocodeAccuracy'), result.accuracy);
                         sObj.put('Geocoding_Message__c', 'Geocoded using Google Geocoding API');
                     } else {
