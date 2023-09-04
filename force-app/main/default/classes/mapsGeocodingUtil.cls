@@ -12,7 +12,8 @@
 * ─────────────────────────────────────────────────────────────────────────────────────────────────┘
 */
 public with sharing class mapsGeocodingUtil {
-
+    
+    // The GeoAccuracy values available in Salesforce
     private static Set<String> geoAccuracies = new Set<String>{
         'Address',
         'NearAddress',
@@ -48,7 +49,11 @@ public with sharing class mapsGeocodingUtil {
         geoCodeResult.errorMessage = (String)result.get('message');
         if (geoCodeResult.status == 'OK'){
             Map<String, Object> data = (Map<String, Object>)result.get('data');
-            geoCodeResult.accuracy = (String)data.get('matchLevel');
+            String geoAccuracy = (String)data.get('matchLevel');
+            if (!geoAccuracies.contains(geoAccuracy)){
+                geoAccuracy = 'Unknown';
+            }
+            geoCodeResult.accuracy = geoAccuracy;
             Map<String, Object> position = (Map<String, Object>)data.get('position');
             geoCodeResult.loc = System.Location.newInstance(
                 (Decimal)position.get('lat'),
