@@ -9,21 +9,18 @@ public with sharing class geocodingUtil {
 
     /**
     * ───────────────────────────────────────────────────────────────────────────────────────────────┐
-    * Retrieves the geocoding service to use from the custom setting Geocoding_Service__c
+    * Retrieves the geocoding service details from the custom setting Geocoding_Service__c
     * ───────────────────────────────────────────────────────────────────────────────────────────────┘
     */    
-    private static String geocodingServiceToUse {
+    private static Geocoding_Service__c geocodingService {
         get {
-            if (geocodingServiceToUse == null){
-                Geocoding_Service__c geocodingService = Geocoding_Service__c.getInstance();
-                if (geocodingService != null && geocodingService.Service_To_Use_Google_or_Maps__c != null){
-                    geocodingServiceToUse = geocodingService.Service_To_Use_Google_or_Maps__c;
-                }
+            if (geocodingService == null){
+                geocodingService = Geocoding_Service__c.getInstance();
             }
-            return geocodingServiceToUse;
+            return geocodingService;
         }
         private set;
-    }      
+    }
 
     /**
     * ───────────────────────────────────────────────────────────────────────────────────────────────┐
@@ -61,9 +58,19 @@ public with sharing class geocodingUtil {
     * ───────────────────────────────────────────────────────────────────────────────────────────────┘
     */    
     public static void processRecords(Map<Id, SObject> oldRecords, Map<Id, SObject> newRecords, Map<String, String> addressFields, Boolean isBefore, Boolean isInsert){
+        // Only continue if geocoding service is enabled (custom setting)
+        if (!geocodingServiceEnabled()) return;
+
+        // Set of record Ids to update
         Set<Id> recordIdsToBeUpdated = new Set<Id>();
+
+        // API Name of the object for which the update is requested
         string objApiName;
+
+        // Validate if there are records provided in the request
         if (newRecords != null && !newRecords.isEmpty()){
+            
+            // Loop through the records
             for (SObject newRecord : newRecords.values()){
                 if (isBefore) {
                     if (emptyAddressFields(newRecord, addressFields)) {
@@ -97,7 +104,7 @@ public with sharing class geocodingUtil {
             }
             
             if (!recordIdsToBeUpdated.isEmpty()){
-                if (geocodingServiceToUse == 'Maps') {
+                if (geocodingService.Service_To_Use_Google_or_Maps__c == 'Maps') {
                     mapsGeocodingQueueable q = new mapsGeocodingQueueable();
                     q.objAPIName = objApiName;
                     q.recordIds = recordIdsToBeUpdated;
@@ -127,7 +134,7 @@ public with sharing class geocodingUtil {
     * ───────────────────────────────────────────────────────────────────────────────────────────────┘
     */    
     public static geoCodeResult geoCodeAddress(String street, String postalcode, String city, String state, String country){
-        return geoCodeAddress(geocodingServiceToUse, street, postalcode, city, state, country);
+        return geoCodeAddress(geocodingService.Service_To_Use_Google_or_Maps__c, street, postalcode, city, state, country);
     } 
 
     /**
@@ -147,13 +154,19 @@ public with sharing class geocodingUtil {
         Long start = System.now().getTime();
         geoCodeResult result;
 
-        if (serviceToUse == 'Maps') {
-            result = mapsGeocodingUtil.geoCodeAddress(street, postalcode, city, state, country);
-            result.serviceUsed = 'Salesforce Maps';
+        if (!geocodingServiceEnabled()){
+            result.status = 'NOK';
+            result.errorMessage = 'Geocoding Service is not enabled!';
         } else {
-            result = googleGeocodingUtil.geoCodeAddress(street, postalcode, city, state, country);
-            result.serviceUsed = 'Google';
+            if (serviceToUse == 'Maps') {
+                result = mapsGeocodingUtil.geoCodeAddress(street, postalcode, city, state, country);
+                result.serviceUsed = 'Salesforce Maps';
+            } else {
+                result = googleGeocodingUtil.geoCodeAddress(street, postalcode, city, state, country);
+                result.serviceUsed = 'Google';
+            }
         }
+
         result.durationInMs = System.now().getTime() - start;
 
         return result;
@@ -171,6 +184,19 @@ public with sharing class geocodingUtil {
         public String accuracy;
         public String serviceUsed;
         public Long durationInMs;
+    }
+
+    /**
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┐
+    * Validate if geocoding service is enabled (Custom Settings)
+    * ────────────────────────────────────────────────────────────────────────────────────────────────
+    * @return   Boolean         True if geocoding service is enabled, otherwise false
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┘
+    */            
+    public static Boolean geocodingServiceEnabled(){
+        // Validate if geocoding service is enabled (custom setting)
+        if (geocodingService != null && geocodingService.Enable_Geocoding__c == true) return true;
+        return false;
     }
 
     /**
