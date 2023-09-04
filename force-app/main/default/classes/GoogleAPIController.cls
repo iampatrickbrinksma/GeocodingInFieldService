@@ -1,18 +1,23 @@
 /**
- * Purpose: Example class to use the Google Geocoding API and the Google Distance Matrix API
- * to geocode address information and calculate travel times between multiple locations. This class
- * contains methods to be used by custom components and Flow
- * IMPORTANT: This code is not intended to be deployed to a Salesforce production environment.
- * It is intended as an example of how to utilise the Google APIs for Salesforce Field Service scenarios.
- * 
- * Author: Patrick Brinksma (Salesforce)
- * 
- */
+* ─────────────────────────────────────────────────────────────────────────────────────────────────┐
+* Purpose: Example class to use the Google Geocoding API and the Google Distance Matrix API
+* to geocode address information and calculate travel times between multiple locations. This class
+* contains methods to be used by custom components and Flow
+* IMPORTANT: This code is not intended to be deployed to a Salesforce production environment.
+* It is intended as an example of how to utilise the Google APIs for Salesforce Field Service scenarios.
+* ──────────────────────────────────────────────────────────────────────────────────────────────────
+* @author         Patrick Brinksma   <patrick@brinksma.es>
+* ─────────────────────────────────────────────────────────────────────────────────────────────────┘
+*/
 public class GoogleAPIController {
 
-    // If Google API Key is in the Custom Settings "Google API Key"
-    // it can be retrieved here. Please consider the security implications of
-    // providing the API Key via a Custom Setting, see: https://help.salesforce.com/articleView?id=sf.cs_schema_settings.htm&type=5
+    /**
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┐
+    * If Google API Key is in the Custom Settings "Google API Key"
+    * it can be retrieved here. Please consider the security implications of
+    * providing the API Key via a Custom Setting, see: https://help.salesforce.com/articleView?id=sf.cs_schema_settings.htm&type=5
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┘
+    */    
     public static String googleAPIKey {
         get {
             if (googleAPIKey == null){
@@ -25,8 +30,21 @@ public class GoogleAPIController {
         }
         set;
     }
-    // Method to be used to gecode and address from a Ligtning Component (Aura or LWC)
-    // For the purpose of this example, the Google API Key is provided by the Lightning Component
+
+    /**
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┐
+    * Method to be used to gecode and address from a Ligtning Component (Aura or LWC)
+    * For the purpose of this example, the Google API Key is provided by the Lightning Component
+    * ────────────────────────────────────────────────────────────────────────────────────────────────
+    * @param    apiKey          Google API Key
+    * @param    street          Street of the adres
+    * @param    postalcode      Postalcode / Zip of the adres
+    * @param    city            City of the adres
+    * @param    state           State of the adres
+    * @param    country         Country of the adres
+    * @return   JSON representation of geocoding result (RESTGoogleMapAPI.GoogleGeoCodeResult)
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┘
+    */    
     @AuraEnabled(cacheable = true)
     public static String geoCodeAddress(String apiKey, String street, String postalcode, String city, String state, String country){
         try {
@@ -49,9 +67,21 @@ public class GoogleAPIController {
         }
     } 
 
-    // Get Latitude and Longitude of a given address in a synchronous method
-    // Method can called from another Apex Class, but not in Trigger context as DML is not allowed! 
-    // Please refer to the future calls in this class for this purpose.
+    /**
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┐
+    * Get Latitude and Longitude of a given address in a synchronous method
+    * Method can called from another Apex Class, but not in Trigger context as DML is not allowed! 
+    * Please refer to the future calls in this class for this purpose.
+    * ────────────────────────────────────────────────────────────────────────────────────────────────
+    * @param    apiKey          Google API Key
+    * @param    street          Street of the adres
+    * @param    postalcode      Postalcode / Zip of the adres
+    * @param    city            City of the adres
+    * @param    state           State of the adres
+    * @param    country         Country of the adres
+    * @return   JSON representation of geocoding result (geoCodeResult)
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┘
+    */        
     public static geoCodeResult getLatLngForAddress(String apiKey, String street, String postalcode, String city, String state, String country){
         try {
             // return location
@@ -87,17 +117,26 @@ public class GoogleAPIController {
         }
     }   
 
-    // Structure to return the Geocoding results
-    // including the status and lat/lng
+    /**
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┐
+    * Structure to return the Geocoding results including the status and lat/lng
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┘
+    */        
     public class geoCodeResult {
         public String status;
         public String errorMessage;
-        public System.Location loc;
         public String accuracy;
+        public System.Location loc;
     } 
      
-
-    // Apex Action to be used in Flow to Geocode an address
+    /**
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┐
+    * Apex Action to be used in Flow to Geocode an address
+    * ────────────────────────────────────────────────────────────────────────────────────────────────
+    * @param    requests          List<FlowRequest>
+    * @return   List<FlowResult>
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┘
+    */            
     @InvocableMethod(label='Geocode Address' description='Geocode address using Google Geocoding API. Google API Key required!' category='Google API')
     public static List<FlowResult> geocodeAddress(List<FlowRequest> requests) {
         // Initiate return result list
@@ -135,7 +174,9 @@ public class GoogleAPIController {
         return results;
     }
 
-    // Request structure for invocable method "geocodeAddress"
+    /**
+     * Request structure for invocable method "geocodeAddress"
+     */
     public class FlowRequest{
         @InvocableVariable(label='Google API Key' required=true)
         public String apiKey;
@@ -151,7 +192,9 @@ public class GoogleAPIController {
         public String Country;
     }
 
-    // Response structure for invocable method "geocodeAddress"
+    /**
+     * Response structure for invocable method "geocodeAddress"
+     */    
     public class FlowResult{
         @InvocableVariable(label='Status' Description='Success: OK, otherwise the call has failed')
         public String status;
@@ -165,8 +208,16 @@ public class GoogleAPIController {
         public String accuracy;        
     }
 
-    // Method to be used to retrieve travel distance and time between multiple locations using a Ligtning Component (Aura or LWC)
-    // For the purpose of this example, the Google API Key is provided by the Lightning Component    
+    /**
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┐
+    * Method to be used to retrieve travel distance and time between multiple locations using a Ligtning Component (Aura or LWC)
+    * For the purpose of this example, the Google API Key is provided by the Lightning Component   
+    * ────────────────────────────────────────────────────────────────────────────────────────────────
+    * @param    apiKey              Google API Key
+    * @param    locationsJson       List<GoogleAPIController.travelTimeLocation>
+    * @return   JSON format of RESTGoogleMapAPI.GoogleDistanceMatrixResult
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┘
+    */     
     @AuraEnabled(cacheable = true)
     public static String getTravelTimes(String apiKey, String locationsJson){
         try {
@@ -189,15 +240,24 @@ public class GoogleAPIController {
         }
     }    
 
-    // Structure for travel time calculations
+    /**
+     * Structure for travel time calculations
+     */    
     public class travelTimeLocation{
         public Integer id;
         public Decimal lat;
         public Decimal lng;
     }
 
-    // Method to be used to retrieve travel distance and time between multiple locations
-    // Returns a list of a reference of the record Ids (from and to) and the distance / travel time  
+    /**
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┐
+    * Method to be used to retrieve travel distance and time between multiple locations
+    * Returns a list of a reference of the record Ids (from and to) and the distance / travel time  
+    * ────────────────────────────────────────────────────────────────────────────────────────────────
+    * @param    requests        List<distanceMatrixRequest>
+    * @return   List<distanceMatrixResult>
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┘
+    */    
     public static List<distanceMatrixResult> getTravelTimesForMultipleLocations(List<distanceMatrixRequest> requests){
         List<distanceMatrixResult> results;
         if (!requests.isEmpty()){
@@ -242,13 +302,17 @@ public class GoogleAPIController {
         return results;
     }
 
-    // Structure for request to call the Google Distance Matrix API
+    /**
+     * Structure for request to call the Google Distance Matrix API
+     */
     public class distanceMatrixRequest{
         public Id Id;
         public System.Location location;
     }
 
-    // Structure for capturing results of the Google Distance Matrix API
+    /**
+     * Structure for capturing results of the Google Distance Matrix API
+     */
     public class distanceMatrixResult{
         public String status;
         public String statusMsg;

@@ -3,12 +3,6 @@
 * Util class with methods supporting the geocoding of address using Salesforce Maps API
 * ──────────────────────────────────────────────────────────────────────────────────────────────────
 * @author         Patrick Brinksma   <patrick@brinksma.es>
-* @version        1.0
-* @created        2023-03-01
-* ──────────────────────────────────────────────────────────────────────────────────────────────────
-* @changes
-* v1.0            Patrick Brinksma   <patrick@brinksma.es>
-* 2023-02-01      Initial version
 * ─────────────────────────────────────────────────────────────────────────────────────────────────┘
 */
 public with sharing class mapsGeocodingUtil {

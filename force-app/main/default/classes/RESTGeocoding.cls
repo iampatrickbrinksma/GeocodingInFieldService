@@ -3,8 +3,6 @@
 * Geocoding exposed via a custom Apex REST API
 * ──────────────────────────────────────────────────────────────────────────────────────────────────
 * @author         Patrick Brinksma   <patrick@brinksma.es>
-* @version        1.0
-* @created        2023-09-01
 * ─────────────────────────────────────────────────────────────────────────────────────────────────┘
 */
 @RestResource(urlMapping='/geocoding/*')

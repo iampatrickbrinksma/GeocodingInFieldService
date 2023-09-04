@@ -1,12 +1,13 @@
 /**
- * Purpose: Example class to call the Google Geocoding API and the Google Distance Matrix API
- * to geocode address information and calculate travel times between multiple locations.
- * IMPORTANT: This code is not intended to be deployed to a Salesforce production environment.
- * It is intended as an example of how to utilise the Google APIs for Salesforce Field Service scenarios.
- * 
- * Author: Patrick Brinksma (Salesforce)
- * 
- */
+* ─────────────────────────────────────────────────────────────────────────────────────────────────┐
+* Purpose: Example class to call the Google Geocoding API and the Google Distance Matrix API
+* to geocode address information and calculate travel times between multiple locations.
+* IMPORTANT: This code is not intended to be deployed to a Salesforce production environment.
+* It is intended as an example of how to utilise the Google APIs for Salesforce Field Service scenarios.
+* ──────────────────────────────────────────────────────────────────────────────────────────────────
+* @author         Patrick Brinksma   <patrick@brinksma.es>
+* ─────────────────────────────────────────────────────────────────────────────────────────────────┘
+*/
 public class RESTGoogleMapAPI {
 
     // Custom Exception
