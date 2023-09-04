@@ -2,11 +2,12 @@
 
 The Salesforce platform provide the ability to geocode addresses using the [Geocoding Data Integration Rules](https://help.salesforce.com/s/articleView?id=sf.data_dot_com_clean_admin_automatically_get_geocodes_for_addresses.htm&type=5) which are also [enabled for Salesforce Field Service objects](https://help.salesforce.com/s/articleView?id=sf.fs_location_tracking.htm&language=en_US&type=5) when Field Service is enabled in your Salesforce org. However, if you want to use a different geocoding service, like Google or Salesforce Maps, you have to build the integration with that service.
 
-This project provides example integration with both [Google's Geocoding API](https://developers.google.com/maps/documentation/geocoding/overview) and [Salesforce Maps Geocoding](https://developer.salesforce.com/docs/atlas.en-us.maps_developer_guide.meta/maps_developer_guide/maps_apex_batchgeocode.htm). Additionally, a Google API showcase application is included to test the Google Geocoding API and the [Google Distance Matrix API](https://developers.google.com/maps/documentation/distance-matrix/overview).
+This project provides example integration with both [Google's Geocoding API](https://developers.google.com/maps/documentation/geocoding/overview) and [Salesforce Maps Geocoding](https://developer.salesforce.com/docs/atlas.en-us.maps_developer_guide.meta/maps_developer_guide/maps_apex_batchgeocode.htm). Additionally, a Google API showcase application is included to test the Google Geocoding API and the [Google Distance Matrix API](https://developers.google.com/maps/documentation/distance-matrix/overview) with which you can determine the distance and travel time between multiple locations.
 
 # Disclaimer
 
-> IMPORTANT: This code is not intended to be deployed to a Salesforce production environment. It is intended as an example of how to utilise the Google Geocoding API, the Google Distance Matrix API and the Salesforce Maps API for Salesforce Field Service scenarios. If you do decide to adopt this code into your project, please make it your own, make it production ready, write proper Apex Test classes and perform extensive testing. This is not a Salesforce product and is not supported by Salesforce.
+IMPORTANT: This code is not intended to be deployed to a Salesforce production environment. It is intended as an example of how to utilise the Google Geocoding API, the Google Distance Matrix API and the Salesforce Maps API for Salesforce Field Service scenarios. If you do decide to adopt this code into your project, please make it your own, make it production ready, write proper Apex Test classes and perform extensive testing.
+> This is not a Salesforce product and is not officially supported by Salesforce. Furthermore, to use the Google APIs you need to acquire a Google API key and to use Salesforce Maps you need to obtain the necessary Salesforce Maps license (please contact your Account Executive).
 
 # Prerequisites
 
@@ -22,11 +23,11 @@ This project provides example integration with both [Google's Geocoding API](htt
 - Deploy metadata to your org
 - Assign the "Field Service Geocoding Permissions" permission set to your user
 - Assign the right Salesforce Maps permission set(s) and/or permission set license to your user
-- Create an org-wide custom setting for "Google API Key" and enter your Google API Key 
-- Create an org-wide custom setting for "Geocoding Service" and provide the value "Google" or "Maps" depending on which geocoding service to use
-- Inactivate the Data Integration Rule "Geocodes for Service Appointment Address" to prevent geocoding using this service
-
-Optionally add the 5 new fields on to the Service Appointment Page Layout as shown here:
+- Create an org-wide value for the custom setting "Google API Key" and enter your Google API Key 
+- Create an org-wide value for the custom setting "Geocoding Service", enable the geocoding service (checkbox) and provide the value "Google" or "Maps" depending on which geocoding service you want to use
+- An Apex Trigger is included on the ServiceAppointment object as an example, and so:
+- Inactivate the Data Integration Rule "Geocodes for Service Appointment Address" to prevent geocoding using this service, otherwise it will override the geocoding values
+- Optionally add the 5 new fields on to the Service Appointment Page Layout as shown here (Geocoding Details section):
 
 ![image](https://user-images.githubusercontent.com/78381570/222396173-117198d7-ac83-4242-88c2-2801027088ac.png)
 
@@ -34,7 +35,7 @@ Optionally add the 5 new fields on to the Service Appointment Page Layout as sho
 
 ## Asynchronous
 
-The geocoding of addresses is done asynchronously because a callout is required and Salesforce does not allow callouts to be made from an Apex Trigger. Queueable classes are used to perform the geocoding asynchronously. 
+The geocoding of addresses is done asynchronously because a callout is required and Salesforce does not allow callouts to be made from an Apex Trigger. Queueable classes are used to perform the geocoding asynchronously, which can be chained in case you perform a bulk update.
 
 ## Apex Trigger
 
@@ -50,10 +51,10 @@ This example comes with an Apex Trigger on the Service Appointment object which 
 
 ## Other Objects
 
-If you want to implement this on another object:
-- Create the custom fields on the object, otherwise exceptions will be thrown due to missing fields
-- Create an Apex Trigger for the object copying the code from the ServiceAppointmentGeocoding Trigger
-- Inactivate the Data Integration Rule for that object
+If you want to implement this on any another object:
+- Create the custom fields on the object, otherwise exceptions will be thrown due to missing fields (TODO: Conditionally set values if fields exist)
+- Create an Apex Trigger for the object copying the code from the included Apex Trigger: ServiceAppointmentGeocoding
+- If the object is supported by a Data Integration Rule, inactivate that rule
 
 If the object has address fields which are named differently, like the Account Billing Address fields, pass a Map<String, String> with the field name mapping into the geocodingUtil.ProcessRecords method. The following example shows how to do this for the billing address on Account:
 
@@ -76,9 +77,23 @@ This allows you to use geocoding for an object with customer address fields as w
 
 ## Bulk Operations
 
-The Google Geocoding API allows you to request geocodes for a single address per API call. Salesforce allows 100 callouts per transaction. The Salesforce Maps bulk API allows up to 50 addresses per API call. To allow for larger chunk sizes the queueable classes that perform the geocoding logic will be chained once the chunk size is larger than the 100 or 50 records (addresses)
+The Google Geocoding API allows you to request geocodes for only a single address per API call. Salesforce allows 100 callouts per transaction. The Salesforce Maps bulk API allows up to 50 addresses per API call. To allow for larger chunk sizes the queueable classes that perform the geocoding logic will be chained once the chunk size is larger than the 100 or 50 records (addresses)
 
-> It is important to know that chaining queueables is limited to a depth of 5 in developer and demo orgs. Typically an Apex Trigger processed a maximum of 200 records per transaction so this should not cause a problem. However when data is being processed in bulk a larger batch size can be used which can lead to an exception being thrown...
+> It is important to know that chaining queueables is limited to a depth of 5 in developer, scratch and demo orgs. Typically one Apex Trigger execution processes a maximum of 200 records per transaction so this should not cause a problem. However when data is being processed in bulk with a larger batch size it can result in an exception...
+
+## Apex REST API
+
+The logic to geocode an address has been exposed as a REST API endpoint (Apex Class: RESTGeocoding). To use this endpoint sent an HTTP GET request to
+
+    /services/apexrest/geocoding
+
+with the following GET parameters:
+* street
+* postalcode
+* city
+* state
+* country
+* servicetouse *(If you want to explicitly set the geocoding service to use. Accepted values are "Google" and "Maps")*
 
 # Google API Showcase
 
@@ -112,7 +127,7 @@ And the raw API Response can also be viewed.
 
 The Google APIs accept a variety of parameters, which can be found in the documentation. In this example code the following parameters have been hardcoded:
 
-Google API Parameters
+## Google API Parameters
 
 The API parameters can be found in Google's documentation. For this example the following parameters are hardcoded in the request URL.
 
