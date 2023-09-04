@@ -13,9 +13,7 @@ public class mapsGeocodingQueueable implements Queueable, Database.AllowsCallout
     public Map<String, String> addressFields;
 
     public void execute(QueueableContext context) {
-
         mapsGeocodingUtil.updateLatLngForAddresses(recordIds, objAPIName, addressFields);
-
     }    
 
 }
