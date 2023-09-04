@@ -69,51 +69,53 @@ public with sharing class geocodingUtil {
     public static void processRecords(Map<Id, SObject> oldRecords, Map<Id, SObject> newRecords, Map<String, String> addressFields, Boolean isBefore, Boolean isInsert){
         Set<Id> recordIdsToBeUpdated = new Set<Id>();
         string objApiName;
-        for (SObject newRecord : newRecords.values()){
-            if (isBefore) {
-                if (emptyAddressFields(newRecord, addressFields)) {
-                    clearGeocodingFields(newRecord, addressFields);
-                } 
-            } else {
-                // Get SObject API Name from the record
-                if (objApiName == null){
-                    objApiName = String.valueOf(newRecord.getSObjectType());
-                }       
-                if (isInsert){
+        if (newRecords != null && !newRecords.isEmpty()){
+            for (SObject newRecord : newRecords.values()){
+                if (isBefore) {
                     if (emptyAddressFields(newRecord, addressFields)) {
-                        continue;
-                    } else {
-                        recordIdsToBeUpdated.add((Id)newRecord.get('Id'));
-                    }
+                        clearGeocodingFields(newRecord, addressFields);
+                    } 
                 } else {
-                    SObject oldRecord = oldRecords.get((Id)newRecord.get('Id'));
-                    if ( 
-                        !emptyAddressFields(newRecord, addressFields) && (
-                        newRecord.get(addressFields.get('Street')) != oldRecord.get(addressFields.get('Street')) ||
-                        newRecord.get(addressFields.get('City')) != oldRecord.get(addressFields.get('City')) ||
-                        newRecord.get(addressFields.get('PostalCode')) != oldRecord.get(addressFields.get('PostalCode')) ||
-                        newRecord.get(addressFields.get('State')) != oldRecord.get(addressFields.get('State')) ||
-                        newRecord.get(addressFields.get('Country')) != oldRecord.get(addressFields.get('Country')))
-                    ) {
-                        recordIdsToBeUpdated.add((Id)newRecord.get('Id'));
+                    // Get SObject API Name from the record
+                    if (objApiName == null){
+                        objApiName = String.valueOf(newRecord.getSObjectType());
+                    }       
+                    if (isInsert){
+                        if (emptyAddressFields(newRecord, addressFields)) {
+                            continue;
+                        } else {
+                            recordIdsToBeUpdated.add((Id)newRecord.get('Id'));
+                        }
+                    } else {
+                        SObject oldRecord = oldRecords.get((Id)newRecord.get('Id'));
+                        if ( 
+                            !emptyAddressFields(newRecord, addressFields) && (
+                            newRecord.get(addressFields.get('Street')) != oldRecord.get(addressFields.get('Street')) ||
+                            newRecord.get(addressFields.get('City')) != oldRecord.get(addressFields.get('City')) ||
+                            newRecord.get(addressFields.get('PostalCode')) != oldRecord.get(addressFields.get('PostalCode')) ||
+                            newRecord.get(addressFields.get('State')) != oldRecord.get(addressFields.get('State')) ||
+                            newRecord.get(addressFields.get('Country')) != oldRecord.get(addressFields.get('Country')))
+                        ) {
+                            recordIdsToBeUpdated.add((Id)newRecord.get('Id'));
+                        }
                     }
                 }
             }
-        }
-        
-        if (!recordIdsToBeUpdated.isEmpty()){
-            if (geocodingServiceToUse == 'Maps') {
-                mapsGeocodingQueueable q = new mapsGeocodingQueueable();
-                q.objAPIName = objApiName;
-                q.recordIds = recordIdsToBeUpdated;
-                q.addressFields = addressFields;
-                System.enqueueJob(q);
-            } else {
-                googleGeocodingQueueable q = new googleGeocodingQueueable();
-                q.objAPIName = objApiName;
-                q.recordIds = recordIdsToBeUpdated;
-                q.addressFields = addressFields;
-                System.enqueueJob(q);                
+            
+            if (!recordIdsToBeUpdated.isEmpty()){
+                if (geocodingServiceToUse == 'Maps') {
+                    mapsGeocodingQueueable q = new mapsGeocodingQueueable();
+                    q.objAPIName = objApiName;
+                    q.recordIds = recordIdsToBeUpdated;
+                    q.addressFields = addressFields;
+                    System.enqueueJob(q);
+                } else {
+                    googleGeocodingQueueable q = new googleGeocodingQueueable();
+                    q.objAPIName = objApiName;
+                    q.recordIds = recordIdsToBeUpdated;
+                    q.addressFields = addressFields;
+                    System.enqueueJob(q);                
+                }
             }
         }
     }
@@ -136,7 +138,7 @@ public with sharing class geocodingUtil {
 
     /**
     * ───────────────────────────────────────────────────────────────────────────────────────────────┐
-    * Method to geocode a single address
+    * Method to geocode a single address with the service of choice
     * ────────────────────────────────────────────────────────────────────────────────────────────────
     * @param    serviceToUse    Which service to use for Geocoding, Google or Maps
     * @param    street          Street of the address
@@ -162,7 +164,6 @@ public with sharing class geocodingUtil {
 
         return result;
     }
-
 
     /**
     * ───────────────────────────────────────────────────────────────────────────────────────────────┐
@@ -198,7 +199,6 @@ public with sharing class geocodingUtil {
             return true;
         }
         return false;
-
     }
 
     /**
