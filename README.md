@@ -21,6 +21,7 @@ IMPORTANT: This code is not intended to be deployed to a Salesforce production e
 # Setup
 
 - Deploy metadata to your org
+    - *Note: If you don't want the custom fields (in the example on the ServiceAppointment object) to be deployed, remove them from the metadata, and from the permission set. The Apex code validates if the fields exist on the object, and only then populates them.*
 - Assign the "Field Service Geocoding Permissions" permission set to your user
 - Assign the right Salesforce Maps permission set(s) and/or permission set license to your user
 - Create an org-wide value for the custom setting "Google API Key" and enter your Google API Key 
