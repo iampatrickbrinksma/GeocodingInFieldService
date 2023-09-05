@@ -126,6 +126,8 @@ public with sharing class googleGeocodingUtil {
 
         // Loop through the records and Geocode the address
         if (!listOfObj.isEmpty()){
+            // Validate existing of custom geocoding fields on the sobject
+            Map<String, Boolean> fieldApiNameExists = geocodingUtil.validateObjectFieldExistence(sObjAPIName, geocodingUtil.customGeocodingFields);
             for (SObject sObj : listOfObj){
                 geocodingUtil.geoCodeResult result = geoCodeAddress(
                     (String)sObj.get(addressFields.get('Street')),
@@ -134,22 +136,28 @@ public with sharing class googleGeocodingUtil {
                     (String)sObj.get(addressFields.get('State')),
                     (String)sObj.get(addressFields.get('Country'))
                 );
+                sObj.put('Geocoding_Last_Update__c', System.now());
                 if (result.status == 'OK'){
+                    if (fieldApiNameExists.get('Geocoding_Status__c') == true)
+                        sObj.put('Geocoding_Status__c', 'Success');
+
                     sObj.put(addressFields.get('Latitude'), result.loc.Latitude);
                     sObj.put(addressFields.get('Longitude'), result.loc.Longitude);
-                    sObj.put('Geocoding_Last_Update__c', System.now());
-                    sObj.put('Geocoding_Status__c', 'Success');
+                    
                     if (result.accuracy != 'Unknown'){
                         sObj.put(addressFields.get('GeocodeAccuracy'), result.accuracy);
-                        sObj.put('Geocoding_Message__c', 'Geocoded using Google Geocoding API');
+                        if (fieldApiNameExists.get('Geocoding_Message__c') == true)
+                            sObj.put('Geocoding_Message__c', 'Geocoded using Google Geocoding API');
                     } else {
                         sObj.put(addressFields.get('GeocodeAccuracy'), 'Unknown');
-                        sObj.put('Geocoding_Message__c', 'Geocoded using Google Geocoding API. Unknown Geocode Accuracy: ' + result.accuracy);
+                        if (fieldApiNameExists.get('Geocoding_Message__c') == true)
+                            sObj.put('Geocoding_Message__c', 'Geocoded using Google Geocoding API. Unknown Geocode Accuracy: ' + result.accuracy);
                     }
                 } else {
-                    sObj.put('Geocoding_Last_Update__c', System.now());
-                    sObj.put('Geocoding_Status__c', 'Error');
-                    sObj.put('Geocoding_Message__c', result.status + ' - ' + result.errorMessage);
+                    if (fieldApiNameExists.get('Geocoding_Status__c') == true)
+                        sObj.put('Geocoding_Status__c', 'Error');
+                        if (fieldApiNameExists.get('Geocoding_Message__c') == true)
+                        sObj.put('Geocoding_Message__c', result.status + ' - ' + result.errorMessage);
                 }
                 recordIds.remove((Id)sObj.get('Id'));
             }

@@ -67,17 +67,18 @@ public with sharing class mapsGeocodingUtil {
     * @param    addressFields   Map<String, String> - map of address field to API field name    
     * ───────────────────────────────────────────────────────────────────────────────────────────────┘
     */ 
-    public static void updateLatLngForAddresses(Set<Id> recordIds, String objApiName, Map<String, String> addressFields){
+    public static void updateLatLngForAddresses(Set<Id> recordIds, String sObjApiName, Map<String, String> addressFields){
 
         String query = 'select Id';
         for (String fieldName : addressFields.values()){
             query += ', ' + fieldName;
         }
-        query += ' from ' + objApiName + ' where Id in :recordIds LIMIT 50';
+        query += ' from ' + sObjApiName + ' where Id in :recordIds LIMIT 50';
 
         List<SObject> records = (List<SObject>) Database.query(query);
 
         if (!records.isEmpty()) {
+            Map<String, Boolean> fieldApiNameExists = geocodingUtil.validateObjectFieldExistence(sObjAPIName, geocodingUtil.customGeocodingFields);
             Map<String,Map<String,String>> addressesToSend = new Map<String,Map<String,String>>(); //create map to hold SAs and their addresses to pass to geocoding API
             for (SObject record : records){
 
@@ -141,23 +142,30 @@ public with sharing class mapsGeocodingUtil {
                                 // the geoAccuracy restricted picklist values
                                 String matchLevel = (String)data.get('matchLevel');
                                 if (!geoAccuracies.contains(matchLevel)){
-                                    record.put('Geocoding_Message__c', 'Geocoded using Salesforce Maps. Unknown Geocode Accuracy: ' + matchLevel);
+                                    if (fieldApiNameExists.get('Geocoding_Message__c') == true)
+                                        record.put('Geocoding_Message__c', 'Geocoded using Salesforce Maps. Unknown Geocode Accuracy: ' + matchLevel);
                                     matchLevel = 'Unknown';
                                 } else {
-                                    record.put('Geocoding_Message__c', 'Geocoded using Salesforce Maps');
+                                    if (fieldApiNameExists.get('Geocoding_Message__c') == true)
+                                        record.put('Geocoding_Message__c', 'Geocoded using Salesforce Maps');
                                 }
                                 record.put(addressFields.get('GeocodeAccuracy'), matchLevel);
-                                record.put('Geocoding_Status__c', 'Success');
-                                record.put('Geocoding_Last_Update__c', System.now());
+                                if (fieldApiNameExists.get('Geocoding_Status__c') == true)
+                                    record.put('Geocoding_Status__c', 'Success');
+                                if (fieldApiNameExists.get('Geocoding_Last_Update__c') == true)
+                                    record.put('Geocoding_Last_Update__c', System.now());
                             } else {
                                 // Something went wrong with a specific address
                                 if (result.get('message') != null) {
                                     record.put('Latitude', null);
                                     record.put('Longitude', null);
                                     record.put(addressFields.get('GeocodeAccuracy'), null);
-                                    record.put('Geocoding_Status__c', 'Error');
+                                    if (fieldApiNameExists.get('Geocoding_Status__c') == true)
+                                        record.put('Geocoding_Status__c', 'Error');
+                                    if (fieldApiNameExists.get('Geocoding_Last_Update__c') == true)
                                     record.put('Geocoding_Last_Update__c', System.now());
-                                    record.put('Geocoding_Message__c', (String)result.get('message'));
+                                    if (fieldApiNameExists.get('Geocoding_Message__c') == true)
+                                        record.put('Geocoding_Message__c', (String)result.get('message'));
                                 }
                             }
                         }
@@ -168,7 +176,7 @@ public with sharing class mapsGeocodingUtil {
                     // Enqueue if there are more records to be processed
                     if (!recordIds.isEmpty()) {
                         mapsGeocodingQueueable q = new mapsGeocodingQueueable();
-                        q.objAPIName = objApiName;
+                        q.objAPIName = sObjApiName;
                         q.recordIds = recordIds;
                         q.addressFields = addressFields;
                         System.enqueueJob(q);

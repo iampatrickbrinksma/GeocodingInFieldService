@@ -9,6 +9,17 @@ public with sharing class geocodingUtil {
 
     /**
     * ───────────────────────────────────────────────────────────────────────────────────────────────┐
+    * Set of custom geocoding fields. As they are optional, we want to set them conditionally
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┘
+    */        
+    public static Set<String> customGeocodingFields = new Set<String>{
+        'Geocoding_Status__c',
+        'Geocoding_Message__c',
+        'Geocoding_Last_Update__c'
+    };
+
+    /**
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┐
     * Retrieves the geocoding service details from the custom setting Geocoding_Service__c
     * ───────────────────────────────────────────────────────────────────────────────────────────────┘
     */    
@@ -198,6 +209,28 @@ public with sharing class geocodingUtil {
         if (geocodingService != null && geocodingService.Enable_Geocoding__c == true) return true;
         return false;
     }
+
+    /**
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┐
+    * Validate if certain fields exist on an sobject
+    * ────────────────────────────────────────────────────────────────────────────────────────────────
+    * @param    sobjApiName                 Api name of the SObject
+    * @param    fieldApiNames               Set of Field API Names to validate  
+    * @return   Map<String, Boolean>        For each field indicator if it exists or not
+    * ───────────────────────────────────────────────────────────────────────────────────────────────┘
+    */     
+    public static Map<String, Boolean> validateObjectFieldExistence(String sobjApiName, Set<String> fieldApiNames){
+        Map<String, Boolean> fieldApiNameExists = new Map<String, Boolean>();
+        Set<String> objectFieldApiNames = Schema.getGlobalDescribe().get(sobjApiName).getDescribe().fields.getMap().keySet();
+        for(String fieldApiName : fieldApiNames){
+            if(objectFieldApiNames.contains(fieldApiName.toLowerCase())){
+                fieldApiNameExists.put(fieldApiName, true);
+            } else {
+                fieldApiNameExists.put(fieldApiName, false);
+            }
+        }
+        return fieldApiNameExists;
+    }    
 
     /**
     * ───────────────────────────────────────────────────────────────────────────────────────────────┐
