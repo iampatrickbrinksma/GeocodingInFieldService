@@ -10,11 +10,11 @@
 public class googleGeocodingQueueable implements Queueable, Database.AllowsCallouts{
 
     public Set<Id> recordIds;
-    public String objAPIName;
+    public String sObjApiName;
     public Map<String, String> addressFields;
 
     public void execute(QueueableContext context) {
-        googleGeocodingUtil.updateLatLngForAddresses(objAPIName, recordIds, addressFields);
+        googleGeocodingUtil.updateLatLngForAddresses(sObjApiName, recordIds, addressFields);
     }
 
 }

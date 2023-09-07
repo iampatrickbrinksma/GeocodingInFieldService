@@ -176,7 +176,7 @@ public with sharing class mapsGeocodingUtil {
                     // Enqueue if there are more records to be processed
                     if (!recordIds.isEmpty()) {
                         mapsGeocodingQueueable q = new mapsGeocodingQueueable();
-                        q.objAPIName = sObjApiName;
+                        q.sObjApiName = sObjApiName;
                         q.recordIds = recordIds;
                         q.addressFields = addressFields;
                         System.enqueueJob(q);
