@@ -43,3 +43,4 @@ $RECYCLE.BIN/
 .husky
 .vscode
 config/user/.sfdx-hardis.pbrinksma.yml
+scripts/*
