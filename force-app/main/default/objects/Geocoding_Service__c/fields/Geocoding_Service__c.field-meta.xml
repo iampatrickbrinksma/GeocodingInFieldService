@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Geocoding_Service__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>If populated, all addresses, for the activated objects (Apex Trigger), will be geocoded using this service. Accepted values: &quot;Google&quot; for the Google Geocoding API or &quot;Salesforce Maps&quot; for the Salesforce Maps Geocoder API. If empty, Data Integration Rules will be used or country specific configurations as defined in the custom metadata: &quot;Geocoding Country Config&quot;</inlineHelpText>
+    <label>Geocoding Service</label>
+    <length>100</length>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

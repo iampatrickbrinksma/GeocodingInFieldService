@@ -3,7 +3,7 @@
     <fullName>Enable_Geocoding__c</fullName>
     <defaultValue>false</defaultValue>
     <externalId>false</externalId>
-    <inlineHelpText>When checked, records will be geocoded using either Google Geocoding API or Salesforce Maps for the objects that have implemented the necessary Apex Triggger.</inlineHelpText>
+    <inlineHelpText>When checked, records will be geocoded according to the configuration for the objects that have implemented the necessary Apex Trigger. Otherwise the logic will be skipped.</inlineHelpText>
     <label>Enable Geocoding</label>
     <trackTrending>false</trackTrending>
     <type>Checkbox</type>
