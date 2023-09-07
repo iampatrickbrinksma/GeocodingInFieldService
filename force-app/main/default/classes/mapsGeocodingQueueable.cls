@@ -9,11 +9,11 @@
 public class mapsGeocodingQueueable implements Queueable, Database.AllowsCallouts {
 
     public Set<Id> recordIds;
-    public String objAPIName;
+    public String sObjApiName;
     public Map<String, String> addressFields;
 
     public void execute(QueueableContext context) {
-        mapsGeocodingUtil.updateLatLngForAddresses(recordIds, objAPIName, addressFields);
+        mapsGeocodingUtil.updateLatLngForAddresses(recordIds, sObjApiName, addressFields);
     }    
 
 }
