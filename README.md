@@ -38,6 +38,19 @@ IMPORTANT: This code is not intended to be deployed to a Salesforce production e
 
 The geocoding of addresses is done asynchronously because a callout is required and Salesforce does not allow callouts to be made from an Apex Trigger. Queueable classes are used to perform the geocoding asynchronously, which can be chained in case you perform a bulk update.
 
+## Custom Settings and Custom Metadata
+
+The behavior can be controlled with the custom setting: "Geocoding Service". Because this is a hierarchical custom setting, it can be controlled on Org, Profile and User level:
+* To enable the geocoding logic, make sure the "Geocoding Enabled" checkbox field is checked
+* If "Geocoding Service" is populated, all addresses, for the activated objects (Apex Trigger), will be geocoded using this service. Accepted values: "Google" for the Google Geocoding API or "Salesforce Maps" for the Salesforce Maps Geocoder API. If empty, Data Integration Rules will be used or country specific configurations as defined in the custom metadata: "Geocoding Country Config"
+
+If you leave the "Geocoding Service" in the custom setting empty, you can control for what country which geocoding service is used creating records in the "Geocoding Country Config" custom metadata:
+* Enter a reference value in the "Geocoding Country Config Name" and "Label" fields
+* Enter the Country name as used in the address fields in the "Country" field
+* Select either Google or Salesforce Maps as geocoding service
+
+*If the country is not listed, and the "Geocoding Service" in the custom setting is empty, addresses for that country will be geocoded via the Data Integration Rules if the object is supported and the rule active.*
+
 ## Apex Trigger
 
 This example comes with an Apex Trigger on the Service Appointment object which geocodes the address if any of the address fields have been changed. The following fields have been added to the Service Appointment object to capture geocoding specific information:
