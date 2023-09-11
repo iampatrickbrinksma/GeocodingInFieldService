@@ -135,7 +135,8 @@ public with sharing class geocodingUtil {
             sObjApiName = String.valueOf(newRecords.values()[0].getSObjectType());
 
             // Use single geocoding service for all records, or country specific configuration            
-            String geocodingServiceForAllRecords = geocodingServiceConfig.Geocoding_Service__c.toLowerCase();
+            String geocodingServiceForAllRecords = geocodingServiceConfig.Geocoding_Service__c;
+            if (geocodingServiceForAllRecords != null) geocodingServiceForAllRecords = geocodingServiceForAllRecords.toLowerCase();
             // It has to be either Google or Salesforce Maps, if not it's considered null
             if (geocodingServiceForAllRecords != null && geocodingServiceForAllRecords != 'salesforce maps' && geocodingServiceForAllRecords != 'google'){
                 geocodingServiceForAllRecords = null;
