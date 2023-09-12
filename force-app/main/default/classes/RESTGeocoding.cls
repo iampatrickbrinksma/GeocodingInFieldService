@@ -28,7 +28,7 @@ global with sharing class RESTGeocoding {
         geocodingUtil.geoCodeResult geoCodeResult;
 
         // If the request explicitely includes the geocoding service to use
-        if (servicetouse.toLowerCase() == 'google' || servicetouse.toLowerCase() == 'maps'){
+        if (servicetouse.toLowerCase() == 'google' || servicetouse.toLowerCase() == 'salesforce maps'){
             geoCodeResult = geocodingUtil.geoCodeAddress(servicetouse, street, postalcode, city, state, country);
         } else {
             geoCodeResult = geocodingUtil.geoCodeAddress(street, postalcode, city, state, country);

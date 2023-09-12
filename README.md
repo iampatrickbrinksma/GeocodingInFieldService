@@ -109,7 +109,7 @@ with the following GET parameters:
 * city
 * state
 * country
-* servicetouse *(If you want to explicitly set the geocoding service to use. Accepted values are "Google" and "Maps")*
+* servicetouse *(If you want to explicitly set the geocoding service to use. Accepted values are "Google" and "Saleforce Maps")*
 
 # Google API Showcase
 
