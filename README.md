@@ -51,6 +51,8 @@ If you leave the "Geocoding Service" in the custom setting empty, you can contro
 * Enter the Country name as used in the address fields in the "Country" field
 * Select either Google or Salesforce Maps as geocoding service
 
+*If the Data Integration Rule for an object is active, but you've configured to use a different geocoding service, any update made by the Data.com clean user will be reverted!*
+
 *If the country is not listed, and the "Geocoding Service" in the custom setting is empty, addresses for that country will be geocoded via the Data Integration Rules if the object is supported and the rule active.*
 
 ## Apex Trigger
