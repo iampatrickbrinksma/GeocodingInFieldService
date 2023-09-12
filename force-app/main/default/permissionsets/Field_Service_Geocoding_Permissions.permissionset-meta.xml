@@ -32,6 +32,10 @@
         <apexClass>mapsGeocodingUtil</apexClass>
         <enabled>true</enabled>
     </classAccesses>
+    <customMetadataTypeAccesses>
+        <enabled>true</enabled>
+        <name>Geocoding_Country_Config__mdt</name>
+    </customMetadataTypeAccesses>
     <customSettingAccesses>
         <enabled>true</enabled>
         <name>Geocoding_Service__c</name>
