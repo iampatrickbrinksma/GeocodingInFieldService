@@ -2,7 +2,9 @@
 
 The Salesforce platform provide the ability to geocode addresses using the [Geocoding Data Integration Rules](https://help.salesforce.com/s/articleView?id=sf.data_dot_com_clean_admin_automatically_get_geocodes_for_addresses.htm&type=5) which are also [enabled for Salesforce Field Service objects](https://help.salesforce.com/s/articleView?id=sf.fs_location_tracking.htm&language=en_US&type=5) when Field Service is enabled in your Salesforce org. However, if you want to use a different geocoding service, like Google or Salesforce Maps, you have to build the integration with that service.
 
-This project provides example integration with both [Google's Geocoding API](https://developers.google.com/maps/documentation/geocoding/overview) and [Salesforce Maps Geocoding](https://developer.salesforce.com/docs/atlas.en-us.maps_developer_guide.meta/maps_developer_guide/maps_apex_batchgeocode.htm). Additionally, a Google API showcase application is included to test the Google Geocoding API and the [Google Distance Matrix API](https://developers.google.com/maps/documentation/distance-matrix/overview) with which you can determine the distance and travel time between multiple locations.
+This project provides example integration with both [Google's Geocoding API](https://developers.google.com/maps/documentation/geocoding/overview) and [Salesforce Maps Geocoding](https://developer.salesforce.com/docs/atlas.en-us.maps_developer_guide.meta/maps_developer_guide/maps_apex_batchgeocode.htm). You can configure to use one service for all your geocoding needs, or configure to use a different service per country. For example, on the Service Appointment object you want all addresses geocoded using the standard Data Integration Rule except the ones in Thailand for which you want to use Salesforce Maps. 
+
+Additionally, a Google API showcase application is included to test the Google Geocoding API and the [Google Distance Matrix API](https://developers.google.com/maps/documentation/distance-matrix/overview) with which you can determine the distance and travel time between multiple locations.
 
 # Disclaimer
 
