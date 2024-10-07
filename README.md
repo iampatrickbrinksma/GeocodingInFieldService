@@ -6,10 +6,20 @@ This project provides example integration with both [Google's Geocoding API](htt
 
 Additionally, a Google API showcase application is included to test the Google Geocoding API and the [Google Distance Matrix API](https://developers.google.com/maps/documentation/distance-matrix/overview) with which you can determine the distance and travel time between multiple locations.
 
-# Disclaimer
+## Disclaimer
+This repository contains code intended to help Salesforce Field Service customers and partners accelerate their implementations. Please note the following:
+* This code is not an official Salesforce product.
+* It is not officially supported by Salesforce.
+* The code serves as an example of how to implement specific functionality or make use of certain features.
 
-IMPORTANT: This code is not intended to be deployed to a Salesforce production environment. It is intended as an example of how to utilise the Google Geocoding API, the Google Distance Matrix API and the Salesforce Maps API for Salesforce Field Service scenarios. If you do decide to adopt this code into your project, please make it your own, make it production ready, write proper Apex Test classes and perform extensive testing.
-> This is not a Salesforce product and is not officially supported by Salesforce. Furthermore, to use the Google APIs you need to acquire a Google API key and to use Salesforce Maps you need to obtain the necessary Salesforce Maps license (please contact your Account Executive).
+Before using this code in a production environment, it is crucial that you:
+* Adopt the code to fit your specific needs.
+* Test thoroughly to ensure it works as expected in your environment.
+* Consider the code to be your own and take full responsibility for its use.
+
+By using this code, you acknowledge that Salesforce is not liable for any issues that may arise from its use.
+
+IMPORTANT: To use the Google APIs you need to acquire a Google API key and to use Salesforce Maps you need to obtain the necessary Salesforce Maps license (please contact your Account Executive).
 
 # Prerequisites
 
