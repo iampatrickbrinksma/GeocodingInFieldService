@@ -28,6 +28,7 @@ public with sharing class mapsGeocodingUtil {
     public static geocodingUtil.geoCodeResult geoCodeAddress(String street, String postalcode, String city, String state, String country){
         // Return object
         geocodingUtil.geoCodeResult geoCodeResult = new geocodingUtil.geoCodeResult();
+        /*
         // Concatenate address
         String address = street + ' ' + city + ' ' + state + ' ' + postalcode + ' ' + country;
 
@@ -54,6 +55,7 @@ public with sharing class mapsGeocodingUtil {
                 (Decimal)position.get('lng')
             );
         }
+        */
         // Return the results
         return geoCodeResult;
     }
@@ -68,7 +70,7 @@ public with sharing class mapsGeocodingUtil {
     * ───────────────────────────────────────────────────────────────────────────────────────────────┘
     */ 
     public static void updateLatLngForAddresses(Set<Id> recordIds, String sObjApiName, Map<String, String> addressFields){
-
+        /*
         String query = 'select Id';
         for (String fieldName : addressFields.values()){
             query += ', ' + fieldName;
@@ -187,5 +189,7 @@ public with sharing class mapsGeocodingUtil {
                 }
             }
         }
+        */
     }
+
 }

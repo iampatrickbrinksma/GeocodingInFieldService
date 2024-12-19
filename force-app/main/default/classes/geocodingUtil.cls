@@ -224,6 +224,7 @@ public with sharing class geocodingUtil {
                                 q.addressFields = addressFields;
                                 System.enqueueJob(q);
                             }
+                            /*
                             when 'salesforce maps' {
                                 mapsGeocodingQueueable q = new mapsGeocodingQueueable();
                                 q.sObjApiName = sObjApiName;
@@ -231,6 +232,7 @@ public with sharing class geocodingUtil {
                                 q.addressFields = addressFields;
                                 System.enqueueJob(q);
                             }
+                            */
                             when else {
                                 // not supported!
                             }
@@ -278,13 +280,17 @@ public with sharing class geocodingUtil {
             result.status = 'NOK';
             result.errorMessage = 'Geocoding Service is not enabled!';
         } else {
+            /*
             if (serviceToUse.toLowerCase() == 'salesforce maps') {
                 result = mapsGeocodingUtil.geoCodeAddress(street, postalcode, city, state, country);
                 result.serviceUsed = 'Salesforce Maps';
             } else if (serviceToUse.toLowerCase() == 'google') {
+            */
                 result = googleGeocodingUtil.geoCodeAddress(street, postalcode, city, state, country);
                 result.serviceUsed = 'Google';
+            /*
             }
+            */
         }
 
         result.durationInMs = System.now().getTime() - start;
